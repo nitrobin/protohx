@@ -82,5 +82,11 @@ class PlatformHelper {
         }
         return _hostPlatform;
     }
+
+    public static function setExecutableBit(executable:String):Void {
+        if (PlatformHelper.getHostPlatform() == Platform.LINUX) {
+            Sys.command("chmod", ["a+x", executable]);
+        }
+    }
 }
 

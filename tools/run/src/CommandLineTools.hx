@@ -37,6 +37,7 @@ class Context {
     }
 
     public function getProtocPath():String {
+        //TODO optimize
         var config:Dynamic = readConfigSafe();
         var path = config.protocPath;
         return path != null ? path : DEFAULUT_PROTOC_PATH;
@@ -117,7 +118,10 @@ class CommandLineTools {
         "--proto_path=" + task.protoPath
         ];
         if (task.haxeOut != null) {
-            args.push("--plugin=protoc-gen-haxe=" + context.getProtocPluginPath());
+            //TODO optimize
+            var pluginPath = context.getProtocPluginPath();
+            PlatformHelper.setExecutableBit(pluginPath);
+            args.push("--plugin=protoc-gen-haxe=" + pluginPath);
             args.push("--haxe_out=" + task.haxeOut);
         }
         if (task.javaOut != null) {
