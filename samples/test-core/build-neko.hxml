@@ -1,0 +1,17 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-resource assets/plugin_proto_input@plugin_proto_input
+-main Main
+-cp src
+-cp out/src-gen
+-D haxe3
+-neko out/run.n
+-lib protohx
+
+--next
+
+-cmd neko out/run.n

@@ -1,0 +1,20 @@
+<project name="myproject" url="https://github.com/nitrobin/protohx" license="BSD">
+    <user name="nitrobin"/>
+    <tag v="protobuf"/>
+    <tag v="cross"/>
+    <tag v="neko"/>
+    <tag v="flash"/>
+    <tag v="js"/>
+    <tag v="cpp"/>
+    <tag v="java"/>
+    <description>Protohx is cross-platform haxe implementation of "Google Protocol Buffers". 
+This is Haxe port of ActionScript3 protoc plugin "protoc-gen-as3".
+Protobuf sites:
+	https://code.google.com/p/protobuf/
+	https://code.google.com/p/protoc-gen-as3/
+Protohx project urls:
+	https://github.com/nitrobin/protohx
+	https://bitbucket.org/nitrobin/protohx
+</description>
+    <version name="0.1">First release, basic features is working correctly</version>
+</project>

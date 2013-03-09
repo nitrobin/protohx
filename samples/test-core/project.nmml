@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="protohx - cross tests" package="org.bitbucket.nitrobin.protohx" version="1.0.0" company="protohx" />
+	<app main="Main" path="out" file="protohx" />
+
+	<source path="src" />
+	<source path="out/src-gen" />
+
+    <!-- HXCPP DEBUGGING -->
+    <haxedef name="HXCPP_DEBUG_LINK" />
+    <haxedef name="DHXCPP_STACK_TRACE" />
+    <haxedef name="HXCPP_STACK_LINE" />
+    <haxedef name="HXCPP_CHECK_POINTER" />
+    <haxedef name="HXCPP_DEBUGGER" />
+    <haxedef name="haxe3" />
+	<haxelib name="nme" />
+	<haxelib name="protohx" />
+
+	<!--<assets path="Assets" rename="assets" exclude="nme.svg" />-->
+	<icon path="Assets/nme.svg" />
+
+    <compilerflag name="-resource" value="assets/plugin_proto_input@plugin_proto_input" />
+
+</project>

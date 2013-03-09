@@ -1,0 +1,4 @@
+-main CommandLineTools
+-neko ../../run.n
+-cp src
+-D haxe3

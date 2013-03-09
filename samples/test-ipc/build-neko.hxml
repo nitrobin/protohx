@@ -1,0 +1,15 @@
+
+-cmd haxelib run protohx generate protohx.json
+
+--next
+
+-main HaxeMain
+-cp src
+-cp out/src-gen-hx
+-D haxe3
+-lib protohx
+-neko out/run.n
+
+--next
+
+-cmd neko out/run.n

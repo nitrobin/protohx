@@ -1,0 +1,8 @@
+{
+    "protoPath": "proto",
+    "protoFiles": [
+        "proto/calc.proto"
+    ],
+    "cleanOut": true,
+    "javaOut": "src-gen-java"
+}

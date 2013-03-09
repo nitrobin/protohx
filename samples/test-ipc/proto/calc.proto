@@ -1,0 +1,40 @@
+package calc;
+
+message ValueMessage {
+    optional float f = 1;
+    optional double d = 2;
+
+    optional int32 i32 = 3;
+    optional sint32 si32 = 4;
+    optional uint32 ui32 = 5;
+
+    optional int64 i64 = 6;
+    optional uint64 ui64 = 7;
+    optional sint64 si64 = 8;
+
+
+    optional fixed32 fi32 = 9;
+    optional fixed64 fi64 = 10;
+
+    optional sfixed32 sfi32 = 11;
+    optional sfixed64 sfi64 = 12;
+}
+
+enum OpCode{
+    ADD = 1;
+    SUB = 2;
+    MUL = 3;
+    DIV = 4;
+}
+
+message InputMessage {
+    repeated ValueMessage values = 1;
+    repeated OpCode opCodes = 2;
+}
+
+message OutputMessage {
+    required bool success = 1;
+    required string msg = 2;
+    optional ValueMessage value = 3;
+}
+

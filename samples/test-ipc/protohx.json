@@ -1,0 +1,8 @@
+{
+    "protoPath": "proto",
+    "protoFiles": [
+        "proto/calc.proto"
+    ],
+    "cleanOut": true,
+    "haxeOut": "out/src-gen-hx"
+}

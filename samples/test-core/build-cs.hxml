@@ -1,0 +1,19 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/java
+
+--next
+
+-resource assets/plugin_proto_input@plugin_proto_input
+-main Main
+-cp src
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-debug
+
+-cs out/cs
+
+--next
+
+#-cmd java -jar out/java/java.jar -cp assets

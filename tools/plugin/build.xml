@@ -1,0 +1,50 @@
+<project default="build">
+  <property name="classesDir" value="classes" />
+  <property name="libsDir" value="libs" />
+  <property name="srcDir" value="src:src-gen" />
+  <property name="distDir" value="bin" />
+  <property name="mainClass" value="protohx.Proto2Haxe" />
+  <property name="finalBaseName" value="plugin" />
+  <property name="finalJarName" value="${finalBaseName}.jar" />
+
+  <target name="compile">
+    <mkdir dir="${classesDir}" />
+    <javac srcdir="${srcDir}" destdir="${classesDir}" >
+      <classpath>
+        <fileset dir="${libsDir}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="scripts" depends="jar">
+    <echo file="${distDir}/${finalBaseName}.bat" append="false"><![CDATA[@cd %~dp0
+@java -jar ${finalJarName}
+]]></echo>
+    <echo file="${distDir}/${finalBaseName}" append="false"><![CDATA[#!/bin/sh
+cd "`dirname "$0"`" && java -jar ${finalJarName}
+#cd "`dirname "$0"`" && tee in.dump | java -jar ${finalJarName} | tee out.dump
+]]></echo>
+    <chmod file="${distDir}/${finalBaseName}" perm="a+x"/>
+  </target>
+  <target name="jar" depends="compile">
+    <mkdir dir="${distDir}" />
+    <delete file="${distDir}/${finalJarName}.jar" />
+
+    <jar destfile="${distDir}/${finalJarName}" filesetmanifest="skip">
+      <zipgroupfileset dir="${libsDir}" includes="*.jar" excludes="" />
+      <fileset dir="${classesDir}" includes="**/*.class"/>
+
+      <manifest>
+        <attribute name="Main-Class" value="${mainClass}" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${classesDir}"/>
+  </target>
+
+  <target name="build" depends="compile,jar,clean,scripts" />
+</project>
