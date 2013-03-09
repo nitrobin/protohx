@@ -7,14 +7,8 @@
     <tag v="js"/>
     <tag v="cpp"/>
     <tag v="java"/>
-    <description>Protohx is cross-platform haxe implementation of "Google Protocol Buffers". 
-This is Haxe port of ActionScript3 protoc plugin "protoc-gen-as3".
-Protobuf sites:
-	https://code.google.com/p/protobuf/
-	https://code.google.com/p/protoc-gen-as3/
-Protohx project urls:
-	https://github.com/nitrobin/protohx
-	https://bitbucket.org/nitrobin/protohx
+    <description>Сross-platform haxe implementation of "Google Protocol Buffers".  
+	https://code.google.com/p/protobuf/	
 </description>
     <version name="0.1">First release, basic features is working correctly</version>
 </project>
