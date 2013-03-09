@@ -1,4 +1,4 @@
-<project name="myproject" url="https://github.com/nitrobin/protohx" license="BSD">
+<project name="protohx" url="https://github.com/nitrobin/protohx" license="BSD">
     <user name="nitrobin"/>
     <tag v="protobuf"/>
     <tag v="cross"/>
