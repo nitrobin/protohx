@@ -27,6 +27,7 @@ class Main {
         r.add(new TestInt());
         r.add(new TestInt64());
         r.add(new TestLargeData());
+        r.add(new TestFloat());
         r.run();
     }
 }
@@ -186,6 +187,40 @@ class TestInt64 extends TestBase {
         forInt64(0, 0xffffff);
         forInt64(0, 0xffffffff);
         forInt64(0, 0xefffffff);
+    }
+}
+
+class TestFloat extends TestBase {
+
+    public function testFloat() {
+        function forFloat(v:PT_Float) {
+            var obj = new IntTestMessage();
+            obj.f = v;
+            obj.d = v;
+            var copy = copyMsg(obj);
+            assertEquals(obj.f, copy.f);
+            assertEquals(obj.d, copy.d);
+        }
+        function forFloat2(v:PT_Float, p:PT_Float) {
+            var obj = new IntTestMessage();
+            obj.f = v;
+            obj.d = v;
+            var copy = copyMsg(obj);
+            assertTrue(Math.abs(obj.f - copy.f) < p);
+            assertTrue(Math.abs(obj.d - copy.d) < p);
+        }
+        forFloat(0x0);
+        forFloat(0xff);
+        forFloat(0xffff);
+        forFloat(0xffffff);
+
+        forFloat(0xffffffff);
+        forFloat(0.5);
+
+        var p = 0.000001;
+        for(i in 1...101){
+            forFloat2(1.0 / i, p);
+        }
     }
 }
 
