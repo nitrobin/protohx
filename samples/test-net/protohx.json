@@ -1,0 +1,9 @@
+{
+    "protoPath": "proto",
+    "protoFiles": [
+        "proto/protocol.proto"
+    ],
+    "cleanOut": true,
+    "haxeOut": "out/src-gen",
+    "javaOut": null
+}

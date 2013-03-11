@@ -1,0 +1,20 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-main MainServer
+-cp src
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-lib nodejs
+
+
+-js out/MainServer.js
+--remap sys:sys
+
+--next
+
+-cmd node out/MainServer.js

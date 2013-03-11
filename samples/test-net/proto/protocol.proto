@@ -1,0 +1,41 @@
+package samples;
+
+message LoginReq {
+    optional string nick = 1;
+}
+
+message LoginRes {
+    required int32  id   = 1;
+}
+
+message PlayerData {
+    optional int32  id     = 1;
+    optional string nick   = 2;
+    optional int32 x       = 3;
+    optional int32 y       = 4;
+    optional string status = 5;
+}
+
+message RemovePlayerRes {
+    required int32  id     = 1;
+}
+
+message ProtocolMessage {
+    enum MsgType {
+        LOGIN_REQ = 100;
+        LOGIN_RES = 101;
+        ADD_PLAYER_RES = 102;
+        UPDATE_PLAYER_REQ = 103;
+        UPDATE_PLAYER_RES = 104;
+        REMOVE_PLAYER_RES = 105;
+    }
+
+    required MsgType  type       = 1;
+    optional LoginReq loginReq   = 2;
+    optional LoginRes loginRes   = 3;
+    optional PlayerData      addPlayerRes    = 4;
+    optional PlayerData      updatePlayerReq = 5;
+    optional PlayerData      updatePlayerRes = 6;
+    optional RemovePlayerRes removePlayerRes = 7;
+}
+
