@@ -3,7 +3,7 @@ This is Haxe port of ActionScript3 protoc plugin "protoc-gen-as3".
 
 WARNING: This project is still in alpha. Be careful for production using.
 
-## See also:
+## See also
     * https://code.google.com/p/protobuf/
     * https://code.google.com/p/protoc-gen-as3/
 
@@ -18,19 +18,20 @@ WARNING: This project is still in alpha. Be careful for production using.
 ## Tested targets 
     * flash
     * neko
-    * cpp (linux32)
+    * cpp (linux32, win32)
     * js
     * java
 
 
-## System requirements 
+## System requirements
+    * haxe 3
     * neko 2.0+ 
     * protoc 2.4.0+ (or 2.5.0+ for generation java sources for test-ipc)
     * java 
     * ant (for build plugin from sources)
 
 
-## How to install:
+## How to install
     1) install protohx
          $ haxelib install protohx
        or
@@ -45,10 +46,10 @@ WARNING: This project is still in alpha. Be careful for production using.
            Download source code from https://code.google.com/p/protobuf/downloads/list
            Unpack and make && make install.
        * NOTE:
-           You also can set custom protoc exwcutable with "setup-protoc" 
+           You also can set custom protoc executable with "setup-protoc"
                $ haxelib run protohx setup-protoc PROTOC_2_5_0_PATH 
            For example:
-               $ haxelib run protohx setup-protoc /home/user/opt/protobuf-2.5.0/src
+               $ haxelib run protohx setup-protoc /home/user/opt/protobuf-2.5.0/src/protoc
 
 
 ## How to use
@@ -85,7 +86,7 @@ WARNING: This project is still in alpha. Be careful for production using.
         * https://bitbucket.org/nitrobin/protohx
 
     This project consists from follow parts:
-        1) tools/protoc-plugin - protoc plugin for generating haxe sources;
+        1) tools/plugin - protoc plugin for generating haxe sources;
         2) tools/run - haxelib runner. Generate haxe and a java sources by json config in project directory;
         3) protohx - library sources. Pure-haxe port of main parts originally ActionScrip3 code from protoc-gen-as3;
         4) samples/test-core - unit tests;
