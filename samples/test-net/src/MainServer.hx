@@ -1,4 +1,5 @@
 package ;
+import nodejs.NodeUtils;
 import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
@@ -7,94 +8,90 @@ import haxe.io.BytesOutput;
 import protohx.ProtocolTypes;
 import haxe.io.Bytes;
 import js.Node;
+import nodejs.NodeUtils;
+using nodejs.NodeUtils;
 
 class MainServer {
 
-    public static
-    function main() {
+    private static var net:NodeNet = Node.net;
+    private static var console:NodeConsole = Node.console;
+
+    private static var clients:List<NodeNetSocket> ;
+
+    public static function main() {
+        net = Node.net;
+        console = Node.console;
+        clients = new List<NodeNetSocket>();
 //        clientTest();
-  tcpTest();
-//flashCrossDomain();
+        flashCrossDomain();
+        tcpTest();
     }
 
-    public static function
-    tcpTest() {
-
-        var tcp = Node.net;
-
-        var s = tcp.createServer(function(c:NodeNetSocket) {
-            c.addListener('connect', function(d) {
-                trace("got connection");
-                c.write("hello\r\n");
-
-                var b = new BytesOutput();
+    public static function tcpTest() {
+        var server:NodeNetServer = net.createServer(function(client:NodeNetSocket) {
+//            client.setEncoding(NodeC.BINARY);
+            client.on(NodeC.EVENT_STREAM_CONNECT, function() {
+                clients.add(client);
+                client.setAP();
+                console.log('got client connection: ${client.getAP()}');
                 var pm = new ProtocolMessage();
                 pm.type = MsgType.LOGIN_REQ;
                 pm.loginReq = new LoginReq();
                 pm.loginReq.nick = "user";
-                pm.writeTo(b);
-                c.write(new NodeBuffer(b.getBytes().getData()));
-                c.write("hello\r\n");
+                client.writeMsg(pm);
             });
 
-            c.addListener('data', function(d) {
-                c.write(d);
+//            client.on(NodeC.EVENT_STREAM_DRAIN, function() {
+//                console.log('client drain: ${client.getAP()}');
+//            });
+            client.on(NodeC.EVENT_STREAM_ERROR, function(e) {
+                console.log('client error: ${client.getAP()}:\n  ${e}');
             });
-
-            c.addListener('data', function(d) {
-                trace("lost connection");
-                c.end();
+            client.on(NodeC.EVENT_STREAM_DATA, function(buffer:NodeBuffer) {
+//                client.write(d); //echo
+//                console.log(buffer);
+                var bytes = buffer.toBytes();
+                client.writeBytes(bytes);
+            });
+            client.on(NodeC.EVENT_STREAM_CLOSE, function() {
+                console.log('client close: ${client.getAP()}');
+            });
+            client.on(NodeC.EVENT_STREAM_END, function(d) {
+                console.log('client end: ${client.getAP()}');
+                client.end();
+                clients.remove(client);
             });
         });
-
-        s.listen(5000, "localhost");
-
-        trace("here");
+        server.on(NodeC.EVENT_STREAM_ERROR, function(e) {
+            console.log('server error: ${e}');
+        });
+        server.listen(5000, /* "localhost", */ function() {
+            console.log('server bound: ${server.serverAddressPort()}');
+        });
+        console.log('tcpTest server started');
     }
 
     public static function flashCrossDomain() {
-        var tcp = Node.net;
-
-        var s = tcp.createServer(function(c) {
-            c.addListener('connect', function(d) {
-                c.write('<?xml version="1.0"?>
-                < !DOCTYPE cross- domain - policy
-                SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
-                <cross -domain - policy>
-                <allow - access - from domain = "*" to - ports = "1138,1139,1140" / >
-                < / cross - domain - policy>');
-                c.end();
+        var server = net.createServer(function(client) {
+            client.addListener(NodeC.EVENT_STREAM_CONNECT, function() {
+                client.write('<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>');
+                client.end();
             });
-
-            c.addListener('end', function(d) {
-                trace("lost connection");
-                c.end();
+            client.on(NodeC.EVENT_STREAM_ERROR, function(e) {
+                console.log('client error: ${client.getAP()}:\n  ${e}');
+            });
+            client.on(NodeC.EVENT_STREAM_END, function(d) {
+                console.log('client end: ${client.getAP()}');
+                client.end();
             });
         });
-
-        trace("args[1] " + Node.process.argv[2]);
-        s.listen(843, Node.process.argv[2]);
-
-    }
-
-
-    static function clientTest() {
-        var
-        console = Node.console,
-        http = Node.http,
-        google = http.createClient(80, "www.google.cl"),
-        request = google.request("GET", "/", {host: "www.google.cl"});
-
-
-        request.addListener('response', function(response) {
-            console.log("STATUS: " + response.statusCode);
-            console.log("HEADERS: " + Node.stringify(response.headers));
-            response.addListener("data", function(chunk) {
-                console.log("BODY: " + chunk);
-            });
+        server.on(NodeC.EVENT_STREAM_ERROR, function(e) {
+            console.log('server error: ${e}');
         });
 
-        request.end();
-
+//        trace("args[1] " + Node.process.argv[2]);
+        server.listen(843, function() {
+            console.log('flashCrossDomain server bound: ${server.serverAddressPort()}');
+        });
     }
 }
