@@ -1,15 +1,23 @@
 package nodejs;
+import player.Session;
 import haxe.io.BytesOutput;
 import js.Node;
 
 class NodeUtils {
 
-    public static function setAP(socket:NodeNetSocket):Void {
-        untyped {socket.ap = addressPort(socket);};
+    public static function setSession(socket:NodeNetSocket, session:Session):Void {
+        untyped {
+            socket.ap = addressPort(socket);
+            socket.session = session;
+        };
     }
 
     public static function getAP(socket:NodeNetSocket):String {
         return cast untyped {socket.ap;};
+    }
+
+    public static function getSession(socket:NodeNetSocket):Session {
+        return cast untyped {socket.session;};
     }
 
     public static function serverAddressPort(server:NodeNetServer):String {
@@ -26,7 +34,12 @@ class NodeUtils {
     public static function writeMsg(socket:NodeNetSocket, msg:protohx.Message):Void {
         var b = new BytesOutput();
         msg.writeTo(b);
-        socket.write(new NodeBuffer(b.getBytes().getData()));
+        var bytes = b.getBytes();
+        var lenBuf = new NodeBuffer(4);
+        lenBuf.writeUInt32LE(bytes.length, 0);
+        trace("LEN OUT:"+bytes.length);
+        socket.write(lenBuf);
+        writeBytes(socket, bytes);
     }
 
     public static function writeBytes(socket:NodeNetSocket, bytes:haxe.io.Bytes):Void {
