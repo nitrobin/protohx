@@ -2,7 +2,7 @@ syntax: glob
 .idea
 **/*.iml
 config.json
-samples/test-core/out
-samples/test-ipc/out
-samples/test-net/out
+samples/01-core/out
+samples/02-ipc/out
+samples/03-network/out
 *.iml
