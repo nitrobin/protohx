@@ -71,8 +71,8 @@ class SessionRegistry {
             var playerData = new PlayerData();
             playerData.id = session.id;
             playerData.nick = msg.loginReq.nick;
-            playerData.x = cast (Math.random() * 100);
-            playerData.y = cast (Math.random() * 100);
+            playerData.x = cast (Math.random() * MAX_X);
+            playerData.y = cast (Math.random() * MAX_Y);
             playerData.status = "hi!";
             playerData.nick = msg.loginReq.nick;
             session.player = playerData;
@@ -102,16 +102,16 @@ class SessionRegistry {
         } else if (msg.type == MsgType.UPDATE_PLAYER_REQ) {
             var respMsg = new ProtocolMessage();
             respMsg.type = MsgType.UPDATE_PLAYER_RES;
-            respMsg.updatePlayerRes = new PlayerData();
-            respMsg.updatePlayerRes.id = session.id ;
+            respMsg.updatePlayerRes = session.player;
             if (msg.updatePlayerReq.hasX()) {
                 respMsg.updatePlayerRes.x = cast Math.min(Math.max(0, msg.updatePlayerReq.x), MAX_X);
             }
             if (msg.updatePlayerReq.hasY()) {
                 respMsg.updatePlayerRes.y = cast Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y) ;
             }
-            session.writeMsg(respMsg);
-
+            for (sessionOther in getAuthorizedSessions()) {
+                sessionOther.writeMsg(respMsg);
+            }
         }
     }
 

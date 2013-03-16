@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="protohx - network test" package="org.bitbucket.nitrobin.protohx.network" version="1.0.0" company="protohx" />
+	<app main="MainClient" path="out" file="protohx-samples-network-client" />
+    <window width="400" height="400"/>
+	<source path="src" />
+	<source path="src-client" />
+	<source path="out/src-gen" />
+
+    <!-- HXCPP DEBUGGING -->
+    <haxedef name="HXCPP_DEBUG_LINK" />
+    <haxedef name="DHXCPP_STACK_TRACE" />
+    <haxedef name="HXCPP_STACK_LINE" />
+    <haxedef name="HXCPP_CHECK_POINTER" />
+    <haxedef name="HXCPP_DEBUGGER" />
+    <haxedef name="haxe3" />
+	<haxelib name="nme" />
+	<haxelib name="protohx" />
+	<haxelib name="actuate" />
+
+	<!--<assets path="Assets" rename="assets" exclude="nme.svg" />-->
+	<icon path="Assets/nme.svg" />
+
+</project>

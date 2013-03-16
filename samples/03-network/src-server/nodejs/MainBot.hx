@@ -31,12 +31,12 @@ class MainBot {
             var msg = new ProtocolMessage();
             msg.type = MsgType.LOGIN_REQ;
             msg.loginReq = new LoginReq();
-            msg.loginReq.nick = "nick" + Math.floor(Math.random() * 100);
+            msg.loginReq.nick = "bot" + Math.floor(Math.random() * 100);
             client.writeMsg(msg);
 //            client.end();
-            haxe.Timer.delay(function() {
-                client.end();
-            }, 1000);
+//            haxe.Timer.delay(function() {
+//                client.end();
+//            }, 1000);
         });
         client.on(NodeC.EVENT_STREAM_DATA, function(buffer:NodeBuffer) {
             var bytes = buffer.toBytes();
@@ -48,14 +48,24 @@ class MainBot {
                 } else if (msg.type == MsgType.ADD_PLAYER_RES) {
                     if (id == msg.addPlayerRes.id) {
                         player = msg.addPlayerRes;
-                        timer = new Timer(5000);
+                        timer = new Timer(1000);
                         timer.run = function() {
+//trace("ai..");
                             var msg = new ProtocolMessage();
                             msg.type = MsgType.UPDATE_PLAYER_REQ;
                             msg.updatePlayerReq = new PlayerData();
-                            msg.updatePlayerReq.x = player.x + Math.floor(Math.random() * 10);
-                            msg.updatePlayerReq.y = player.y + Math.floor(Math.random() * 10);
+                            msg.updatePlayerReq.x = player.x + Math.floor(Math.random() * 40 - 20);
+                            msg.updatePlayerReq.y = player.y + Math.floor(Math.random() * 40 - 20);
                             client.writeMsg(msg);
+                        }
+                    }
+                } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
+                    if (id == msg.updatePlayerRes.id) {
+                        if (msg.updatePlayerRes.hasX()) {
+                            player.x = msg.updatePlayerRes.x;
+                        }
+                        if (msg.updatePlayerRes.hasY()) {
+                            player.y = msg.updatePlayerRes.y;
                         }
                     }
                 }
