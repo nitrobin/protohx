@@ -1,9 +1,9 @@
 package ;
 import flash.events.MouseEvent;
-import nme.text.TextField;
+import flash.text.TextField;
 import haxe.ds.IntMap;
 import samples.PlayerData;
-import nme.display.Sprite;
+import flash.display.Sprite;
 import haxe.io.BytesData;
 import net.MsgQueue;
 import samples.LoginReq;
@@ -13,16 +13,16 @@ import protohx.Message;
 import protohx.ProtocolTypes;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
-import nme.events.Event;
-import nme.events.ErrorEvent;
-import nme.events.IOErrorEvent;
-import nme.events.SecurityErrorEvent;
-import nme.events.ProgressEvent;
+import flash.events.Event;
+import flash.events.ErrorEvent;
+import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
+import flash.events.ProgressEvent;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.easing.Quad;
 
 
-class PlayerNode extends nme.display.Sprite {
+class PlayerNode extends flash.display.Sprite {
     public var player:PlayerData;
     var tf:TextField;
 
@@ -175,8 +175,11 @@ class SocketConnection {
 //#else
 
 
-class MainClient extends nme.display.Sprite {
+class MainClient extends flash.display.Sprite {
 
+    public static function main() {
+        flash.Lib.current.addChild(new MainClient());
+    }
     public function new() {
         super();
         graphics.clear();

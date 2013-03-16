@@ -1,0 +1,21 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-main MainClient
+-cp src
+-cp src-client
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-lib actuate
+
+
+-swf out/run.swf
+-swf-header 400:400:40:FFFFFF
+
+--next
+
+-cmd flashplayerdebugger out/run.swf
