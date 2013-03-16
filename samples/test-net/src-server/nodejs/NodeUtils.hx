@@ -1,5 +1,5 @@
 package nodejs;
-import player.Session;
+import logic.Session;
 import haxe.io.BytesOutput;
 import js.Node;
 
@@ -37,7 +37,6 @@ class NodeUtils {
         var bytes = b.getBytes();
         var lenBuf = new NodeBuffer(4);
         lenBuf.writeUInt32LE(bytes.length, 0);
-        trace("LEN OUT:"+bytes.length);
         socket.write(lenBuf);
         writeBytes(socket, bytes);
     }

@@ -3,9 +3,9 @@ import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
 import protohx.Message;
+import protohx.ProtocolTypes;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
-import protohx.ProtocolTypes;
 
 class MainClient extends nme.display.Sprite {
 

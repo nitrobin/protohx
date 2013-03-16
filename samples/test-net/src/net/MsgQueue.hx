@@ -1,10 +1,10 @@
-package player;
+package net;
+import samples.ProtocolMessage;
 import haxe.io.BytesInput;
 import haxe.io.BytesBuffer;
-import samples.ProtocolMessage;
-import js.Node.NodeNetSocket;
 import haxe.io.Bytes;
-class BytesParser {
+
+class MsgQueue {
     private var bytesBuff:Bytes;
     private var msgs:List<ProtocolMessage>;
 
@@ -12,16 +12,19 @@ class BytesParser {
         msgs = new List<ProtocolMessage>();
     }
 
-    public function hasMsg():Bool {
+    public inline function hasMsg():Bool {
         return !msgs.isEmpty();
     }
 
-    public function popMsg():ProtocolMessage {
+    public inline function popMsg():ProtocolMessage {
         return msgs.pop();
     }
 
+    public inline function addMsg(msg:ProtocolMessage):Void {
+        msgs.add(msg);
+    }
+
     public function addBytes(bytes:Bytes) {
-        trace("added bytes:" + bytes.length);
         if (bytesBuff == null) {
             bytesBuff = bytes;
         } else {
@@ -30,8 +33,6 @@ class BytesParser {
             buffer.add(bytes);
             bytesBuff = buffer.getBytes();
         }
-//        trace("bytes:" + (bytesBuff != null ? bytesBuff.length : 0));
-
         if (bytesBuff == null || bytesBuff.length < 4) {
             return;
         }
@@ -42,29 +43,25 @@ class BytesParser {
             var packetSize = bi.readInt32();
             available -= 4;
             if (packetSize <= available) {
-                trace("LEN IN:"+packetSize);
-
                 available -= packetSize;
                 var msgBytes = bi.read(packetSize);
                 var msg = new ProtocolMessage();
                 msg.mergeFrom(msgBytes);
-//                trace("msg:" + packetSize);
-                msgs.add(msg);
+                addMsg(msg);
             } else {
                 available += 4;
-//                trace("available:" + available);
                 break;
             }
         }
-        trace("available:" + available);
         if (available == 0) {
-            bytesBuff == null;
+            bytesBuff = null;
         } else if (available > 0) {
             if (bytesBuff.length != available) {
-                bytesBuff = bytesBuff.sub(bytesBuff.length - available, available);
+                var pos = bytesBuff.length - available;
+                bytesBuff = bytesBuff.sub(pos, available);
             }
         } else {
-            throw "error";
+            throw "Wrong available: " + available;
         }
     }
 }

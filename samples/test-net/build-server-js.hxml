@@ -4,7 +4,8 @@
 
 --next
 
--main MainServer
+-main nodejs.MainServer
+-cp src
 -cp src-server
 -cp out/src-gen
 -D haxe3
