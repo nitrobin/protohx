@@ -5,6 +5,7 @@ import samples.LoginRes;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
 
+//TODO optimize broadcasting
 class SessionRegistry {
     private inline static var MAX_X:Int = 400;
     private inline static var MAX_Y:Int = 400;
@@ -61,7 +62,7 @@ class SessionRegistry {
     }
 
     public function handleMsg(session:Session, msg:ProtocolMessage) {
-        log("SERVER MSG: " + haxe.Json.stringify(msg));
+//        log("SERVER MSG: " + haxe.Json.stringify(msg));
         if (msg.type == MsgType.LOGIN_REQ) {
             if (session.player != null) {
                 log("double login!");

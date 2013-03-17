@@ -76,16 +76,22 @@ class MainServer {
     }
 
     public static function flashCrossDomain() {
-        var server = net.createServer(function(client) {
+        var xml = '<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>';
+        var len = NodeBuffer.byteLength(xml);
+        var b = new NodeBuffer(len + 1);
+        b.write(xml, 0);
+        b.writeUInt8(0, len);
+        var server = net.createServer(function(client:NodeNetSocket) {
             client.addListener(NodeC.EVENT_STREAM_CONNECT, function() {
-                client.write('<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>');
+                client.write(b);
+                console.log('server cross-domain-policy');
                 client.end();
             });
             client.on(NodeC.EVENT_STREAM_ERROR, function(e) {
-                console.log('client error: ${client.getAP()}:\n  ${e}');
+                console.log('server error:\n  ${e}');
             });
             client.on(NodeC.EVENT_STREAM_END, function(d) {
-                console.log('client end: ${client.getAP()}');
+//                console.log('server end');
                 client.end();
             });
         });

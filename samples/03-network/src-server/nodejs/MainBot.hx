@@ -69,7 +69,7 @@ class MainBot {
                         }
                     }
                 }
-                trace('CLIENT MSG ${id}: ' + haxe.Json.stringify(msg));
+//                trace('CLIENT MSG ${id}: ' + haxe.Json.stringify(msg));
             }
         });
         client.on(NodeC.EVENT_STREAM_CLOSE, function() {

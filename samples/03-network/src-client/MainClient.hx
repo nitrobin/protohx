@@ -66,19 +66,18 @@ class PlayerNode extends flash.display.Sprite {
 //TODO refactoring
 class SocketConnection {
     var socket:flash.net.Socket;
-    var msgQueue:MsgQueue;
-    var s:Sprite;
-    var players:IntMap<PlayerNode>;
 
-    public function connect(s:Sprite) {
-        this.s = s;
-        socket.connect("127.0.0.1", 5000);
-        s.addEventListener(MouseEvent.CLICK, onClick);
+    public function connect(host, port, onConnect, addBytes) {
+        socket.connect(host, port);
+        this.onConnect = onConnect;
+        this.addBytes = addBytes;
     }
 
+    public dynamic function onConnect():Void {}
+
+    public dynamic function addBytes(bytes:Bytes):Void {}
+
     public function new() {
-        players = new IntMap<PlayerNode>();
-        msgQueue = new MsgQueue();
         socket = new flash.net.Socket();
         socket.addEventListener(Event.CLOSE, closeHandler);
         socket.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
@@ -97,22 +96,9 @@ class SocketConnection {
         trace("errorHandler" + Std.string(e));
     }
 
-    private function onClick(e:MouseEvent):Void {
-        var msg = new ProtocolMessage();
-        msg.type = MsgType.UPDATE_PLAYER_REQ;
-        msg.updatePlayerReq = new PlayerData();
-        msg.updatePlayerReq.x = cast e.stageX;
-        msg.updatePlayerReq.y = cast e.stageY;
-        writeMsg(msg);
-    }
-
     private function connectHandler(e:Event):Void {
 //        trace("connectHandler");
-        var msg = new ProtocolMessage();
-        msg.type = MsgType.LOGIN_REQ;
-        msg.loginReq = new LoginReq();
-        msg.loginReq.nick = "uf" + Math.floor(Math.random() * 100);
-        writeMsg(msg);
+        onConnect();
     }
 
     public function writeMsg(msg:protohx.Message):Void {
@@ -129,35 +115,7 @@ class SocketConnection {
             var b = new flash.utils.ByteArray();
             socket.readBytes(b);
             var bs = Bytes.ofData(cast b);
-            msgQueue.addBytes(bs);
-
-            while (msgQueue.hasMsg()) {
-                var msg:ProtocolMessage = msgQueue.popMsg();
-//                trace('CLIENT MSG: ' + haxe.Json.stringify(msg));
-                if (msg.type == MsgType.REMOVE_PLAYER_RES) {
-                    var node = players.get(msg.removePlayerRes.id);
-                    if (node != null) {
-                        players.remove(msg.removePlayerRes.id) ;
-                        s.removeChild(node);
-                    }
-                } else if (msg.type == MsgType.ADD_PLAYER_RES) {
-                    var p = msg.addPlayerRes;
-                    var node = new PlayerNode(p);
-                    players.set(p.id, node);
-                    s.addChild(node);
-                } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
-                    var node = players.get(msg.updatePlayerRes.id);
-                    if (node != null) {
-                        if (msg.updatePlayerRes.hasX()) {
-                            node.player.x = msg.updatePlayerRes.x;
-                        }
-                        if (msg.updatePlayerRes.hasY()) {
-                            node.player.y = msg.updatePlayerRes.y;
-                        }
-                        node.rebuild(true);
-                    }
-                }
-            }
+            addBytes(bs);
         } catch (e:Dynamic) {
             trace('error: ' + haxe.Json.stringify(e));
         }
@@ -177,17 +135,75 @@ class SocketConnection {
 
 class MainClient extends flash.display.Sprite {
 
+    var msgQueue:MsgQueue;
+    var players:IntMap<PlayerNode>;
+    var s:SocketConnection;
+
     public static function main() {
         flash.Lib.current.addChild(new MainClient());
     }
+
     public function new() {
         super();
+        players = new IntMap<PlayerNode>();
+        msgQueue = new MsgQueue();
         graphics.clear();
         graphics.beginFill(0x888888);
         graphics.drawRect(0, 0, 400, 400);
         graphics.endFill();
+        addEventListener(MouseEvent.CLICK, onClick);
 
-        var s = new SocketConnection();
-        s.connect(this);
+        s = new SocketConnection();
+        s.connect("127.0.0.1", 5000, onConnect, addBytes);
     }
+
+    private function onClick(e:MouseEvent):Void {
+        var msg = new ProtocolMessage();
+        msg.type = MsgType.UPDATE_PLAYER_REQ;
+        msg.updatePlayerReq = new PlayerData();
+        msg.updatePlayerReq.x = cast e.stageX;
+        msg.updatePlayerReq.y = cast e.stageY;
+        s.writeMsg(msg);
+    }
+
+
+    private function onConnect():Void {
+        var msg = new ProtocolMessage();
+        msg.type = MsgType.LOGIN_REQ;
+        msg.loginReq = new LoginReq();
+        msg.loginReq.nick = "uf" + Math.floor(Math.random() * 100);
+        s.writeMsg(msg);
+    }
+
+    private function addBytes(bytes:Bytes):Void {
+        msgQueue.addBytes(bytes);
+        while (msgQueue.hasMsg()) {
+            var msg:ProtocolMessage = msgQueue.popMsg();
+//                trace('CLIENT MSG: ' + haxe.Json.stringify(msg));
+            if (msg.type == MsgType.REMOVE_PLAYER_RES) {
+                var node = players.get(msg.removePlayerRes.id);
+                if (node != null) {
+                    players.remove(msg.removePlayerRes.id) ;
+                    removeChild(node);
+                }
+            } else if (msg.type == MsgType.ADD_PLAYER_RES) {
+                var p = msg.addPlayerRes;
+                var node = new PlayerNode(p);
+                players.set(p.id, node);
+                addChild(node);
+            } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
+                var node = players.get(msg.updatePlayerRes.id);
+                if (node != null) {
+                    if (msg.updatePlayerRes.hasX()) {
+                        node.player.x = msg.updatePlayerRes.x;
+                    }
+                    if (msg.updatePlayerRes.hasY()) {
+                        node.player.y = msg.updatePlayerRes.y;
+                    }
+                    node.rebuild(true);
+                }
+            }
+        }
+    }
+
 }
