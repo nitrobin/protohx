@@ -62,8 +62,8 @@ class PlayerNode extends flash.display.Sprite {
 
     }
 }
-//#if flash
-//TODO refactoring
+
+#if flash
 class SocketConnection {
     var socket:flash.net.Socket;
 
@@ -130,7 +130,54 @@ class SocketConnection {
         socket.removeEventListener(Event.CONNECT, connectHandler);
     }
 }
-//#else
+#else
+class SocketConnection {
+    var socket:sys.net.Socket;
+
+    public function connect(host, port, onConnect, addBytes) {
+        this.onConnect = onConnect;
+        this.addBytes = addBytes;
+        socket.connect(new sys.net.Host(host), port);
+        trace("connected");
+        onConnect();
+
+        var buffer = Bytes.alloc(1024);
+        var timer = new haxe.Timer(500);
+        timer.run = function() {
+            try {
+                var r:{ read:Array<sys.net.Socket> } = sys.net.Socket.select([socket], [], [], 0.01);
+                if (r.read == null || r.read.length == 0) {
+                    return;
+                }
+                var size = socket.input.readBytes(buffer, 0, buffer.length);
+                addBytes(buffer.sub(0, size));
+            } catch (e:Dynamic) {
+                trace(e);
+            }
+        };
+    }
+
+    public dynamic function onConnect():Void {}
+
+    public dynamic function addBytes(bytes:Bytes):Void {}
+
+    public function new() {
+        socket = new sys.net.Socket();
+        socket.input.bigEndian = false;
+        socket.output.bigEndian = false;
+    }
+
+    public function writeMsg(msg:protohx.Message):Void {
+        var b = new BytesOutput();
+        msg.writeTo(b);
+        var bytes = b.getBytes();
+        socket.output.writeInt32(bytes.length);
+        socket.output.writeBytes(bytes, 0, bytes.length);
+    }
+
+
+}
+#end
 
 
 class MainClient extends flash.display.Sprite {
