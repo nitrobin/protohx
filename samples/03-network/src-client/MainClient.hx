@@ -1,4 +1,5 @@
 package ;
+import haxe.io.Eof;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import haxe.ds.IntMap;
@@ -29,7 +30,8 @@ class PlayerNode extends flash.display.Sprite {
     public function new(player:PlayerData) {
         super();
         this.player = player;
-        var bot:Bool = ((player.nick != null) && player.nick.indexOf("bot") == 0);
+        var nick = player.nick;
+        var bot:Bool = ((nick != null) && nick.indexOf("bot") == 0);
 
         graphics.clear();
         graphics.lineStyle(1, 0x000000);
@@ -67,14 +69,15 @@ class PlayerNode extends flash.display.Sprite {
 class SocketConnection {
     var socket:flash.net.Socket;
 
-    public function connect(host, port, onConnect, addBytes) {
+    public function connect(host, port, onConnect, addBytes, onClose) {
         socket.connect(host, port);
         this.onConnect = onConnect;
+        this.onClose = onClose;
         this.addBytes = addBytes;
     }
 
     public dynamic function onConnect():Void {}
-
+    public dynamic function onClose():Void {}
     public dynamic function addBytes(bytes:Bytes):Void {}
 
     public function new() {
@@ -90,6 +93,7 @@ class SocketConnection {
 
     private function closeHandler(e:Event):Void {
         trace("closeHandler");
+        onClose();
     }
 
     private function errorHandler(e:ErrorEvent):Void {
@@ -134,23 +138,30 @@ class SocketConnection {
 class SocketConnection {
     var socket:sys.net.Socket;
 
-    public function connect(host, port, onConnect, addBytes) {
+    public function connect(host, port, onConnect, addBytes, onClose) {
         this.onConnect = onConnect;
         this.addBytes = addBytes;
+        this.onClose = onClose;
         socket.connect(new sys.net.Host(host), port);
         trace("connected");
         onConnect();
 
         var buffer = Bytes.alloc(1024);
-        var timer = new haxe.Timer(500);
+        var socks = [socket];
+        var timer = new haxe.Timer(100);
         timer.run = function() {
             try {
-                var r:{ read:Array<sys.net.Socket> } = sys.net.Socket.select([socket], [], [], 0.01);
-                if (r.read == null || r.read.length == 0) {
-                    return;
-                }
-                var size = socket.input.readBytes(buffer, 0, buffer.length);
-                addBytes(buffer.sub(0, size));
+                var r:Array<sys.net.Socket>;
+                do {
+                    r = sys.net.Socket.select(socks, null, null, 0.001).read;
+                    for (s in r) {
+                        var size = s.input.readBytes(buffer, 0, buffer.length);
+                        addBytes(buffer.sub(0, size));
+                    }
+                } while (r.length > 0);
+            } catch (e:haxe.io.Eof) {
+                timer.stop();
+                onClose();
             } catch (e:Dynamic) {
                 trace(e);
             }
@@ -158,7 +169,7 @@ class SocketConnection {
     }
 
     public dynamic function onConnect():Void {}
-
+    public dynamic function onClose():Void {}
     public dynamic function addBytes(bytes:Bytes):Void {}
 
     public function new() {
@@ -174,8 +185,6 @@ class SocketConnection {
         socket.output.writeInt32(bytes.length);
         socket.output.writeBytes(bytes, 0, bytes.length);
     }
-
-
 }
 #end
 
@@ -201,7 +210,7 @@ class MainClient extends flash.display.Sprite {
         addEventListener(MouseEvent.CLICK, onClick);
 
         s = new SocketConnection();
-        s.connect("127.0.0.1", 5000, onConnect, addBytes);
+        s.connect("127.0.0.1", 5000, onConnect, addBytes, onClose);
     }
 
     private function onClick(e:MouseEvent):Void {
@@ -213,12 +222,15 @@ class MainClient extends flash.display.Sprite {
         s.writeMsg(msg);
     }
 
+    private function onClose():Void {
+        trace("connection closed");
+    }
 
     private function onConnect():Void {
         var msg = new ProtocolMessage();
         msg.type = MsgType.LOGIN_REQ;
         msg.loginReq = new LoginReq();
-        msg.loginReq.nick = "uf" + Math.floor(Math.random() * 100);
+        msg.loginReq.nick = "uf" + Math.floor(Math.random() * 50);
         s.writeMsg(msg);
     }
 

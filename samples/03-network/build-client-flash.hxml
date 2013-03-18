@@ -14,7 +14,7 @@
 
 
 -swf out/run.swf
--swf-header 400:400:40:FFFFFF
+-swf-header 320:320:40:FFFFFF
 
 --next
 

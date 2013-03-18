@@ -38,11 +38,11 @@ class MainServer {
 
     public static function tcpTest() {
         var sr:SessionRegistry = new SessionRegistry();
-        var server:NodeNetServer = net.createServer(function(client:NodeNetSocket) {
+        var server:NodeNetServer = net.createServer({allowHalfOpen:true}, function(client:NodeNetSocket) {
             client.on(NodeC.EVENT_STREAM_CONNECT, function() {
                 var session = new NodeSession(client);
                 client.setSession(session);
-                sr.registerSession(session);
+                sr.handleConnect(session);
                 console.log('server got client connection: ${client.getAP()}');
             });
 //            client.on(NodeC.EVENT_STREAM_DRAIN, function() {
@@ -59,8 +59,8 @@ class MainServer {
             });
             client.on(NodeC.EVENT_STREAM_END, function(d) {
 //                console.log('server got client end: ${client.getAP()}');
-                client.end();
                 sr.handleDisconnect(client.getSession());
+                client.end();
             });
             client.on(NodeC.EVENT_STREAM_CLOSE, function() {
                 console.log('server got client close: ${client.getAP()}');
@@ -81,7 +81,7 @@ class MainServer {
         var b = new NodeBuffer(len + 1);
         b.write(xml, 0);
         b.writeUInt8(0, len);
-        var server = net.createServer(function(client:NodeNetSocket) {
+        var server = net.createServer({allowHalfOpen:true}, function(client:NodeNetSocket) {
             client.addListener(NodeC.EVENT_STREAM_CONNECT, function() {
                 client.write(b);
                 console.log('server cross-domain-policy');

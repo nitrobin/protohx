@@ -7,8 +7,8 @@ import samples.protocolmessage.MsgType;
 
 //TODO optimize broadcasting
 class SessionRegistry {
-    private inline static var MAX_X:Int = 400;
-    private inline static var MAX_Y:Int = 400;
+    private inline static var MAX_X:Int = 320;
+    private inline static var MAX_Y:Int = 320;
 
     private var sessions:List<Session>;
     private var sessionId:Int;
@@ -27,30 +27,43 @@ class SessionRegistry {
         sessionId = 0;
     }
 
-
     public function registerSession(session:Session) {
         session.id = nextSessionId();
         sessions.add(session);
     }
 
-    public function handleDisconnect(session:Session) {
+    public function unRegisterSession(session:Session) {
         sessions.remove(session);
+    }
+
+    private function isAuthorized(session:Session):Bool {
+        return session != null && session.player != null;
+    }
+
+    public function forEachSessions(test:Session -> Bool, body:Session -> Void):Void {
+        for (session in sessions) {
+            if (test(session)) {
+                body(session);
+            }
+        }
+    }
+
+    public function handleConnect(session:Session) {
+        registerSession(session);
+    }
+
+    public function handleDisconnect(session:Session) {
+        unRegisterSession(session);
         if (session.player == null) {
             return;
         }
         var removePlayer = new ProtocolMessage();
         removePlayer.type = MsgType.REMOVE_PLAYER_RES;
         removePlayer.removePlayerRes = new RemovePlayerRes();
-        removePlayer.removePlayerRes .id = session.player.id;
+        removePlayer.removePlayerRes.id = session.player.id;
 
-        for (sessionOther in getAuthorizedSessions()) {
+        forEachSessions(isAuthorized, function(sessionOther) {
             sessionOther.writeMsg(removePlayer);
-        }
-    }
-
-    public function getAuthorizedSessions():Iterable<Session> {
-        return Lambda.filter(sessions, function(session:Session):Bool {
-            return session != null && session.player != null;
         });
     }
 
@@ -88,7 +101,7 @@ class SessionRegistry {
             addPlayerMsg.type = MsgType.ADD_PLAYER_RES;
             addPlayerMsg.addPlayerRes = session.player;
 
-            for (sessionOther in getAuthorizedSessions()) {
+            forEachSessions(isAuthorized, function(sessionOther) {
                 if (sessionOther == session) {
                     sessionOther.writeMsg(addPlayerMsg);
                 } else {
@@ -99,7 +112,7 @@ class SessionRegistry {
                     addOtherPlayer.addPlayerRes = sessionOther.player;
                     session.writeMsg(addOtherPlayer);
                 }
-            }
+            });
         } else if (msg.type == MsgType.UPDATE_PLAYER_REQ) {
             var respMsg = new ProtocolMessage();
             respMsg.type = MsgType.UPDATE_PLAYER_RES;
@@ -110,9 +123,9 @@ class SessionRegistry {
             if (msg.updatePlayerReq.hasY()) {
                 respMsg.updatePlayerRes.y = cast Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y) ;
             }
-            for (sessionOther in getAuthorizedSessions()) {
+            forEachSessions(isAuthorized, function(sessionOther) {
                 sessionOther.writeMsg(respMsg);
-            }
+            });
         }
     }
 

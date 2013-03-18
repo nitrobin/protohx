@@ -50,7 +50,6 @@ class MainBot {
                         player = msg.addPlayerRes;
                         timer = new Timer(1000);
                         timer.run = function() {
-//trace("ai..");
                             var msg = new ProtocolMessage();
                             msg.type = MsgType.UPDATE_PLAYER_REQ;
                             msg.updatePlayerReq = new PlayerData();
