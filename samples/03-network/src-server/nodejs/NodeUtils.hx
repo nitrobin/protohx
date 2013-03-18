@@ -31,6 +31,14 @@ class NodeUtils {
         return '${socket.remoteAddress}:${socket.remotePort}';
     }
 
+    public static function writeSafe(socket:NodeNetSocket, frame:NodeBuffer):Void {
+        try{
+            socket.write(frame);
+        } catch(e:Dynamic){
+            trace(e);
+        }
+    }
+
     public static function writeMsgSafe(socket:NodeNetSocket, msg:protohx.Message):Void {
         try{
             writeMsg(socket, msg);

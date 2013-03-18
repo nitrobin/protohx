@@ -62,7 +62,7 @@ class SessionRegistry {
         removePlayer.removePlayerRes = new RemovePlayerRes();
         removePlayer.removePlayerRes.id = session.player.id;
 
-        forEachSessions(isAuthorized, function(sessionOther) {
+        forEachSessions(isAuthorized, function(sessionOther:Session) {
             sessionOther.writeMsg(removePlayer);
         });
     }
@@ -101,12 +101,9 @@ class SessionRegistry {
             addPlayerMsg.type = MsgType.ADD_PLAYER_RES;
             addPlayerMsg.addPlayerRes = session.player;
 
-            forEachSessions(isAuthorized, function(sessionOther) {
-                if (sessionOther == session) {
-                    sessionOther.writeMsg(addPlayerMsg);
-                } else {
-                    sessionOther.writeMsg(addPlayerMsg);
-
+            forEachSessions(isAuthorized, function(sessionOther:Session) {
+                sessionOther.writeMsg(addPlayerMsg);
+                if (sessionOther != session) {
                     var addOtherPlayer = new ProtocolMessage();
                     addOtherPlayer.type = MsgType.ADD_PLAYER_RES;
                     addOtherPlayer.addPlayerRes = sessionOther.player;
@@ -123,7 +120,7 @@ class SessionRegistry {
             if (msg.updatePlayerReq.hasY()) {
                 respMsg.updatePlayerRes.y = cast Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y) ;
             }
-            forEachSessions(isAuthorized, function(sessionOther) {
+            forEachSessions(isAuthorized, function(sessionOther:Session) {
                 sessionOther.writeMsg(respMsg);
             });
         }
