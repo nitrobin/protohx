@@ -31,18 +31,44 @@ class NodeUtils {
         return '${socket.remoteAddress}:${socket.remotePort}';
     }
 
+    public static function writeMsgSafe(socket:NodeNetSocket, msg:protohx.Message):Void {
+        try{
+            writeMsg(socket, msg);
+        } catch(e:Dynamic){
+            trace(e);
+        }
+    }
+
     public static function writeMsg(socket:NodeNetSocket, msg:protohx.Message):Void {
+        var bytes = msgToBytes(msg);
+        var frameSize = new NodeBuffer(4);
+        frameSize.writeUInt32LE(bytes.length, 0);
+        var frameData = toNodeBuffer(bytes);
+        socket.write(frameSize);
+        socket.write(frameData);
+    }
+
+    public static function toFrame(msg:protohx.Message):NodeBuffer {
+        var bytes = msgToBytes(msg);
+        var frame = new NodeBuffer(bytes.length + 4);
+        frame.writeUInt32LE(bytes.length, 0);
+        var frameData = toNodeBuffer(bytes);
+        frameData.copy(frame, 4, 0, bytes.length);
+        return frameData;
+    }
+
+    public static function toNodeBuffer(bytes:haxe.io.Bytes):NodeBuffer {
+       return new NodeBuffer(bytes.getData());
+    }
+
+    public static function msgToBytes(msg:protohx.Message):haxe.io.Bytes {
         var b = new BytesOutput();
         msg.writeTo(b);
-        var bytes = b.getBytes();
-        var lenBuf = new NodeBuffer(4);
-        lenBuf.writeUInt32LE(bytes.length, 0);
-        socket.write(lenBuf);
-        writeBytes(socket, bytes);
+        return b.getBytes();
     }
 
     public static function writeBytes(socket:NodeNetSocket, bytes:haxe.io.Bytes):Void {
-        socket.write(new NodeBuffer(bytes.getData()));
+        socket.write(toNodeBuffer(bytes));
     }
 
     public static function toBytes(buffer:NodeBuffer):haxe.io.Bytes {

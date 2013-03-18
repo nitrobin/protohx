@@ -20,7 +20,7 @@ class NodeSession extends Session {
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
-        socket.writeMsg(msg);
+        socket.writeMsgSafe(msg);
     }
 }
 
@@ -59,11 +59,11 @@ class MainServer {
             });
             client.on(NodeC.EVENT_STREAM_END, function(d) {
 //                console.log('server got client end: ${client.getAP()}');
-                sr.handleDisconnect(client.getSession());
                 client.end();
             });
             client.on(NodeC.EVENT_STREAM_CLOSE, function() {
                 console.log('server got client close: ${client.getAP()}');
+                sr.handleDisconnect(client.getSession());
             });
         });
         server.on(NodeC.EVENT_STREAM_ERROR, function(e) {

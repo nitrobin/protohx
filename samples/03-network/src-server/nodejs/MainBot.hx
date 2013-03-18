@@ -32,7 +32,7 @@ class MainBot {
             msg.type = MsgType.LOGIN_REQ;
             msg.loginReq = new LoginReq();
             msg.loginReq.nick = "bot" + Math.floor(Math.random() * 100);
-            client.writeMsg(msg);
+            client.writeMsgSafe(msg);
 //            client.end();
 //            haxe.Timer.delay(function() {
 //                client.end();
@@ -55,7 +55,7 @@ class MainBot {
                             msg.updatePlayerReq = new PlayerData();
                             msg.updatePlayerReq.x = player.x + Math.floor(Math.random() * 40 - 20);
                             msg.updatePlayerReq.y = player.y + Math.floor(Math.random() * 40 - 20);
-                            client.writeMsg(msg);
+                            client.writeMsgSafe(msg);
                         }
                     }
                 } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
