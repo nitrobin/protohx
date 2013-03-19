@@ -13,11 +13,11 @@ class SessionRegistry {
     private var sessions:List<Session>;
     private var sessionId:Int;
 
-    public function log(msg):Void {
+    private function log(msg):Void {
         trace(msg);
     }
 
-    public function nextSessionId():Int {
+    private function nextSessionId():Int {
         sessionId++;
         return sessionId;
     }
@@ -27,12 +27,12 @@ class SessionRegistry {
         sessionId = 0;
     }
 
-    public function registerSession(session:Session) {
+    private function registerSession(session:Session) {
         session.id = nextSessionId();
         sessions.add(session);
     }
 
-    public function unRegisterSession(session:Session) {
+    private function unRegisterSession(session:Session) {
         sessions.remove(session);
     }
 
@@ -40,7 +40,7 @@ class SessionRegistry {
         return session != null && session.player != null;
     }
 
-    public function forEachSessions(test:Session -> Bool, body:Session -> Void):Void {
+    private function forEachSessions(test:Session -> Bool, body:Session -> Void):Void {
         for (session in sessions) {
             if (test(session)) {
                 body(session);
@@ -48,11 +48,11 @@ class SessionRegistry {
         }
     }
 
-    public function handleConnect(session:Session) {
+    public function sessionConnect(session:Session) {
         registerSession(session);
     }
 
-    public function handleDisconnect(session:Session) {
+    public function sessionDisconnect(session:Session) {
         unRegisterSession(session);
         if (session.player == null) {
             return;
@@ -61,20 +61,22 @@ class SessionRegistry {
         removePlayer.type = MsgType.REMOVE_PLAYER_RES;
         removePlayer.removePlayerRes = new RemovePlayerRes();
         removePlayer.removePlayerRes.id = session.player.id;
+        var removePlayerBaked = session.bakeMsg(removePlayer);
 
         forEachSessions(isAuthorized, function(sessionOther:Session) {
-            sessionOther.writeMsg(removePlayer);
+            sessionOther.writeMsgBaked(removePlayerBaked);
         });
     }
 
-    public function handleData(session:Session) {
-        while (session.msgQueue.hasMsg()) {
-            var msg:ProtocolMessage = session.msgQueue.popMsg();
+    public function sessionData(session:Session, bytes:haxe.io.Bytes) {
+        session.incomeMsgQueue.addBytes(bytes);
+        while (session.incomeMsgQueue.hasMsg()) {
+            var msg:ProtocolMessage = session.incomeMsgQueue.popMsg();
             handleMsg(session, msg);
         }
     }
 
-    public function handleMsg(session:Session, msg:ProtocolMessage) {
+    private function handleMsg(session:Session, msg:ProtocolMessage) {
 //        log("SERVER MSG: " + haxe.Json.stringify(msg));
         if (msg.type == MsgType.LOGIN_REQ) {
             if (session.player != null) {
@@ -100,9 +102,10 @@ class SessionRegistry {
             var addPlayerMsg = new ProtocolMessage();
             addPlayerMsg.type = MsgType.ADD_PLAYER_RES;
             addPlayerMsg.addPlayerRes = session.player;
+            var addPlayerMsgBaked = session.bakeMsg(addPlayerMsg);
 
             forEachSessions(isAuthorized, function(sessionOther:Session) {
-                sessionOther.writeMsg(addPlayerMsg);
+                sessionOther.writeMsgBaked(addPlayerMsgBaked);
                 if (sessionOther != session) {
                     var addOtherPlayer = new ProtocolMessage();
                     addOtherPlayer.type = MsgType.ADD_PLAYER_RES;
@@ -120,8 +123,9 @@ class SessionRegistry {
             if (msg.updatePlayerReq.hasY()) {
                 respMsg.updatePlayerRes.y = cast Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y) ;
             }
+            var respMsgBaked = session.bakeMsg(respMsg);
             forEachSessions(isAuthorized, function(sessionOther:Session) {
-                sessionOther.writeMsg(respMsg);
+                sessionOther.writeMsgBaked(respMsgBaked);
             });
         }
     }

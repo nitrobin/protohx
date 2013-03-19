@@ -1,4 +1,5 @@
 package nodejs;
+#if js
 import logic.Session;
 import haxe.io.BytesOutput;
 import js.Node;
@@ -57,11 +58,12 @@ class NodeUtils {
     }
 
     public static function toFrame(msg:protohx.Message):NodeBuffer {
-        var bytes = msgToBytes(msg);
-        var frame = new NodeBuffer(bytes.length + 4);
-        frame.writeUInt32LE(bytes.length, 0);
+        var b = new BytesOutput();
+        b.writeInt32(0);
+        msg.writeTo(b);
+        var bytes = b.getBytes();
         var frameData = toNodeBuffer(bytes);
-        frameData.copy(frame, 4, 0, bytes.length);
+        frameData.writeUInt32LE(bytes.length - 4, 0);
         return frameData;
     }
 
@@ -83,3 +85,5 @@ class NodeUtils {
         return haxe.io.Bytes.ofData(cast buffer);
     }
 }
+
+#end

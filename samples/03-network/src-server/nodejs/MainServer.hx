@@ -1,4 +1,6 @@
 package nodejs;
+#if js
+import logic.BakedMsg;
 import logic.SessionRegistry;
 import logic.Session;
 import haxe.io.Bytes;
@@ -17,6 +19,14 @@ class NodeSession extends Session {
 
     public override function close():Void {
         socket.end();
+    }
+
+    public override function bakeMsg(msg:protohx.Message):BakedMsg {
+        return new BakedMsg(msg, msg.toFrame());
+    }
+
+    public override function writeMsgBaked(msg:BakedMsg):Void {
+        socket.writeSafe(msg.data);
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
@@ -42,7 +52,7 @@ class MainServer {
             client.on(NodeC.EVENT_STREAM_CONNECT, function() {
                 var session = new NodeSession(client);
                 client.setSession(session);
-                sr.handleConnect(session);
+                sr.sessionConnect(session);
                 console.log('server got client connection: ${client.getAP()}');
             });
 //            client.on(NodeC.EVENT_STREAM_DRAIN, function() {
@@ -54,8 +64,7 @@ class MainServer {
             client.on(NodeC.EVENT_STREAM_DATA, function(buffer:NodeBuffer) {
                 var session = client.getSession();
                 var bytes = buffer.toBytes();
-                session.msgQueue.addBytes(bytes);
-                sr.handleData(session);
+                sr.sessionData(session, bytes);
             });
             client.on(NodeC.EVENT_STREAM_END, function(d) {
 //                console.log('server got client end: ${client.getAP()}');
@@ -63,7 +72,7 @@ class MainServer {
             });
             client.on(NodeC.EVENT_STREAM_CLOSE, function() {
                 console.log('server got client close: ${client.getAP()}');
-                sr.handleDisconnect(client.getSession());
+                sr.sessionDisconnect(client.getSession());
             });
         });
         server.on(NodeC.EVENT_STREAM_ERROR, function(e) {
@@ -105,3 +114,5 @@ class MainServer {
         });
     }
 }
+
+#end
