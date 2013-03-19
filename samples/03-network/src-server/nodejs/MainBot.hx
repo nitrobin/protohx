@@ -1,4 +1,5 @@
 package nodejs;
+#if js
 import haxe.Timer;
 import samples.PlayerData;
 import samples.LoginReq;
@@ -80,3 +81,4 @@ class MainBot {
     }
 
 }
+#end

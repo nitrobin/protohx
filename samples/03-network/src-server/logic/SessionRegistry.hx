@@ -105,6 +105,8 @@ class SessionRegistry {
             var addPlayerMsgBaked = session.bakeMsg(addPlayerMsg);
 
             forEachSessions(isAuthorized, function(sessionOther:Session) {
+                log("auth");
+
                 sessionOther.writeMsgBaked(addPlayerMsgBaked);
                 if (sessionOther != session) {
                     var addOtherPlayer = new ProtocolMessage();

@@ -2,7 +2,6 @@ package logic;
 import net.MsgQueue;
 import samples.ProtocolMessage;
 import samples.PlayerData;
-import js.Node;
 
 class Session {
     public var id:Int;

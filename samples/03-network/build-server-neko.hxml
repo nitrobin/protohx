@@ -1,0 +1,20 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-main native.MainServer
+-cp src
+-cp src-server
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-lib nodejs
+
+
+-neko out/MainServer.n
+
+--next
+
+-cmd neko out/MainServer.n
