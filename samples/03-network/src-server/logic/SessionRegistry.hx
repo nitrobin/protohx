@@ -87,8 +87,8 @@ class SessionRegistry {
             var playerData = new PlayerData();
             playerData.id = session.id;
             playerData.nick = msg.loginReq.nick;
-            playerData.x = cast (Math.random() * MAX_X);
-            playerData.y = cast (Math.random() * MAX_Y);
+            playerData.x = Std.int(Math.random() * MAX_X);
+            playerData.y = Std.int(Math.random() * MAX_Y);
             playerData.status = "hi!";
             playerData.nick = msg.loginReq.nick;
             session.player = playerData;
@@ -105,8 +105,6 @@ class SessionRegistry {
             var addPlayerMsgBaked = session.bakeMsg(addPlayerMsg);
 
             forEachSessions(isAuthorized, function(sessionOther:Session) {
-                log("auth");
-
                 sessionOther.writeMsgBaked(addPlayerMsgBaked);
                 if (sessionOther != session) {
                     var addOtherPlayer = new ProtocolMessage();
@@ -120,10 +118,10 @@ class SessionRegistry {
             respMsg.type = MsgType.UPDATE_PLAYER_RES;
             respMsg.updatePlayerRes = session.player;
             if (msg.updatePlayerReq.hasX()) {
-                respMsg.updatePlayerRes.x = cast Math.min(Math.max(0, msg.updatePlayerReq.x), MAX_X);
+                respMsg.updatePlayerRes.x = Std.int(Math.min(Math.max(0, msg.updatePlayerReq.x), MAX_X));
             }
             if (msg.updatePlayerReq.hasY()) {
-                respMsg.updatePlayerRes.y = cast Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y) ;
+                respMsg.updatePlayerRes.y = Std.int(Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y));
             }
             var respMsgBaked = session.bakeMsg(respMsg);
             forEachSessions(isAuthorized, function(sessionOther:Session) {

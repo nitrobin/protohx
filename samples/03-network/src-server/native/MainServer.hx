@@ -3,6 +3,7 @@ package native;
 import logic.SessionRegistry;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
+import haxe.CallStack;
 import sys.net.Socket;
 import neko.net.ThreadServer;
 import neko.Lib;
@@ -32,11 +33,16 @@ class NativeSession extends logic.Session {
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
-        var bytes = msgToBytes(msg);
-        trace("send:" + bytes.length);
-        socket.output.writeInt32(bytes.length);
-        socket.output.write(bytes);
-        socket.output.flush();
+        try{
+            var bytes = msgToBytes(msg);
+            socket.output.writeInt32(bytes.length);
+            socket.output.write(bytes);
+            socket.output.flush();
+        }catch(e:Dynamic){
+            trace(e);
+            var stack = CallStack.toString(CallStack.exceptionStack());
+            trace(stack);
+        }
     }
 
     public static function msgToBytes(msg:protohx.Message):haxe.io.Bytes {
