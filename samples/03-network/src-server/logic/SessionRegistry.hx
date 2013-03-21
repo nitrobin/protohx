@@ -5,7 +5,12 @@ import samples.LoginRes;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
 
-//TODO optimize broadcasting
+enum NetEvent{
+    NEConnect;
+    NEMsg(type:Int, msg:ProtocolMessage);
+    NEDisconnect;
+}
+
 class SessionRegistry {
     private inline static var MAX_X:Int = 320;
     private inline static var MAX_Y:Int = 320;
@@ -36,7 +41,7 @@ class SessionRegistry {
         sessions.remove(session);
     }
 
-    private function isAuthorized(session:Session):Bool {
+    private static function isAuthorized(session:Session):Bool {
         return session != null && session.player != null;
     }
 
@@ -50,35 +55,41 @@ class SessionRegistry {
 
     public function sessionConnect(session:Session) {
         registerSession(session);
+        handleMsg(session, NEConnect);
     }
 
     public function sessionDisconnect(session:Session) {
         unRegisterSession(session);
-        if (session.player == null) {
-            return;
-        }
-        var removePlayer = new ProtocolMessage();
-        removePlayer.type = MsgType.REMOVE_PLAYER_RES;
-        removePlayer.removePlayerRes = new RemovePlayerRes();
-        removePlayer.removePlayerRes.id = session.player.id;
-        var removePlayerBaked = session.bakeMsg(removePlayer);
-
-        forEachSessions(isAuthorized, function(sessionOther:Session) {
-            sessionOther.writeMsgBaked(removePlayerBaked);
-        });
+        handleMsg(session, NEDisconnect);
     }
 
     public function sessionData(session:Session, bytes:haxe.io.Bytes) {
         session.incomeMsgQueue.addBytes(bytes);
         while (session.incomeMsgQueue.hasMsg()) {
             var msg:ProtocolMessage = session.incomeMsgQueue.popMsg();
-            handleMsg(session, msg);
+            handleMsg(session, NEMsg(msg.type, msg));
         }
     }
 
-    private function handleMsg(session:Session, msg:ProtocolMessage) {
+    private function handleMsg(session:Session, e:NetEvent) {
 //        log("SERVER MSG: " + haxe.Json.stringify(msg));
-        if (msg.type == MsgType.LOGIN_REQ) {
+        switch(e){
+        case NEConnect:{ /*pass*/};
+        case NEDisconnect:{
+            if (session.player == null) {
+                return;
+            }
+            var removePlayer = new ProtocolMessage();
+            removePlayer.type = MsgType.REMOVE_PLAYER_RES;
+            removePlayer.removePlayerRes = new RemovePlayerRes();
+            removePlayer.removePlayerRes.id = session.player.id;
+            var removePlayerBaked = session.bakeMsg(removePlayer);
+
+            forEachSessions(isAuthorized, function(sessionOther:Session) {
+                sessionOther.writeMsgBaked(removePlayerBaked);
+            });
+        };
+        case NEMsg(MsgType.LOGIN_REQ, msg): {
             if (session.player != null) {
                 log("double login!");
                 session.close();
@@ -90,7 +101,6 @@ class SessionRegistry {
             playerData.x = Std.int(Math.random() * MAX_X);
             playerData.y = Std.int(Math.random() * MAX_Y);
             playerData.status = "hi!";
-            playerData.nick = msg.loginReq.nick;
             session.player = playerData;
 
             var respMsg = new ProtocolMessage();
@@ -113,20 +123,30 @@ class SessionRegistry {
                     session.writeMsg(addOtherPlayer);
                 }
             });
-        } else if (msg.type == MsgType.UPDATE_PLAYER_REQ) {
+        };
+        case NEMsg(MsgType.UPDATE_PLAYER_REQ, msg): {
+            var player = session.player;
+            var updateData = msg.updatePlayerReq;
+            updateData.id = player.id;
+            if (updateData.hasX()) {
+                updateData.x = Std.int(Math.min(Math.max(0, updateData.x), MAX_X));
+                player.x = updateData.x;
+            }
+            if (updateData.hasY()) {
+                updateData.y = Std.int(Math.min(Math.max(0, updateData.y), MAX_Y));
+                player.y = updateData.y;
+            }
+            if (updateData.hasStatus()) {
+                player.status = updateData.status;
+            }
             var respMsg = new ProtocolMessage();
             respMsg.type = MsgType.UPDATE_PLAYER_RES;
-            respMsg.updatePlayerRes = session.player;
-            if (msg.updatePlayerReq.hasX()) {
-                respMsg.updatePlayerRes.x = Std.int(Math.min(Math.max(0, msg.updatePlayerReq.x), MAX_X));
-            }
-            if (msg.updatePlayerReq.hasY()) {
-                respMsg.updatePlayerRes.y = Std.int(Math.min(Math.max(0, msg.updatePlayerReq.y), MAX_Y));
-            }
+            respMsg.updatePlayerRes = updateData;
             var respMsgBaked = session.bakeMsg(respMsg);
             forEachSessions(isAuthorized, function(sessionOther:Session) {
                 sessionOther.writeMsgBaked(respMsgBaked);
             });
+        }
         }
     }
 
