@@ -17,9 +17,9 @@ WARNING: This project is still in alpha. Be careful for production using.
 
 ## Tested targets 
     * flash
-    * neko
-    * cpp (linux32, win32)
-    * js
+    * neko 2.0
+    * cpp (linux32, win32, android)
+    * js (node.js, phantomjs)
     * java
 
 
@@ -86,10 +86,18 @@ WARNING: This project is still in alpha. Be careful for production using.
         * https://bitbucket.org/nitrobin/protohx
 
     This project consists from follow parts:
-        1) tools/plugin - protoc plugin for generating haxe sources;
-        2) tools/run - haxelib runner. Generate haxe and a java sources by json config in project directory;
-        3) protohx - library sources. Pure-haxe port of main parts originally ActionScrip3 code from protoc-gen-as3;
-        4) samples/test-core - unit tests;
-        5) samples/test-ipc - java-to-neko and neko-to-java intercommunication test.
+        * tools/plugin - protoc plugin for generating haxe sources;
+        * tools/run - haxelib runner. Generate haxe and a java sources by json config in project directory;
+        * protohx - library sources. Pure-haxe port of main parts originally ActionScrip3 code from protoc-gen-as3;
+        * samples/01-core - unit tests;
+        * samples/02-ipc - java-to-neko and neko-to-java intercommunication test.
             NOTE: Install protoc 2.5.0 via "haxelib run protohx setup-protoc PROTOC_2_5_0_PATH" before building java part of this test.
-
+        * samples/03-network - complete client-server example.
+           build/run node.js server:
+                haxe build-server-js.hxml
+           or neko serer:
+                haxe build-server-neko.hxml
+           and build/run flash client:
+                haxe build-client-flash.hxml
+           or
+                nme test (flash|linux|android)
