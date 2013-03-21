@@ -42,8 +42,11 @@ class MainServer {
     public static function main() {
         flashCrossDomain();
         tcpTest();
-        haxe.Timer.delay(MainBot.tcpClientTest, 1000);
-        haxe.Timer.delay(MainBot.tcpClientTest, 1000);
+        haxe.Timer.delay(function(){
+            for(i in 0...10){
+                MainBot.tcpClientTest();
+            }
+        }, 1000);
     }
 
     public static function tcpTest() {
@@ -108,7 +111,6 @@ class MainServer {
             console.log('server error: ${e}');
         });
 
-//        trace("args[1] " + Node.process.argv[2]);
         server.listen(843, function() {
             console.log('flashCrossDomain server bound: ${server.serverAddressPort()}');
         });

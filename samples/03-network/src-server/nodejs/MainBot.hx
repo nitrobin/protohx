@@ -49,7 +49,7 @@ class MainBot {
                 } else if (msg.type == MsgType.ADD_PLAYER_RES) {
                     if (id == msg.addPlayerRes.id) {
                         player = msg.addPlayerRes;
-                        timer = new Timer(1000);
+                        timer = new Timer(1000 + Std.int(1000 * Math.random()));
                         timer.run = function() {
                             var msg = new ProtocolMessage();
                             msg.type = MsgType.UPDATE_PLAYER_REQ;

@@ -126,6 +126,9 @@ class SessionRegistry {
         };
         case NEMsg(MsgType.UPDATE_PLAYER_REQ, msg): {
             var player = session.player;
+            if(player == null){
+                return;
+            }
             var updateData = msg.updatePlayerReq;
             updateData.id = player.id;
             if (updateData.hasX()) {
