@@ -1,24 +1,22 @@
 package ;
-import haxe.io.Eof;
-import flash.events.MouseEvent;
-import flash.text.TextField;
-import haxe.ds.IntMap;
 import samples.PlayerData;
-import flash.display.Sprite;
-import haxe.io.BytesData;
-import net.MsgQueue;
 import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
+
+import net.MsgQueue;
+import net.SocketConnection;
+
 import protohx.Message;
 import protohx.ProtocolTypes;
-import haxe.io.BytesOutput;
+
+import haxe.ds.IntMap;
 import haxe.io.Bytes;
-import flash.events.Event;
-import flash.events.ErrorEvent;
-import flash.events.IOErrorEvent;
-import flash.events.SecurityErrorEvent;
-import flash.events.ProgressEvent;
+
+import flash.text.TextField;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.easing.Quad;
 
@@ -64,129 +62,6 @@ class PlayerNode extends flash.display.Sprite {
 
     }
 }
-
-#if flash
-class SocketConnection {
-    var socket:flash.net.Socket;
-
-    public function connect(host, port, onConnect, addBytes, onClose) {
-        socket.connect(host, port);
-        this.onConnect = onConnect;
-        this.onClose = onClose;
-        this.addBytes = addBytes;
-    }
-
-    public dynamic function onConnect():Void {}
-    public dynamic function onClose():Void {}
-    public dynamic function addBytes(bytes:Bytes):Void {}
-
-    public function new() {
-        socket = new flash.net.Socket();
-        socket.addEventListener(Event.CLOSE, closeHandler);
-        socket.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-        socket.addEventListener(IOErrorEvent.NETWORK_ERROR, errorHandler);
-        socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
-        socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
-        socket.addEventListener(Event.CONNECT, connectHandler);
-        socket.endian = flash.utils.Endian.LITTLE_ENDIAN ;
-    }
-
-    private function closeHandler(e:Event):Void {
-        trace("closeHandler");
-        onClose();
-    }
-
-    private function errorHandler(e:ErrorEvent):Void {
-        trace("errorHandler" + Std.string(e));
-    }
-
-    private function connectHandler(e:Event):Void {
-//        trace("connectHandler");
-        onConnect();
-    }
-
-    public function writeMsg(msg:protohx.Message):Void {
-        var b = new BytesOutput();
-        msg.writeTo(b);
-        var bytes = b.getBytes();
-        socket.writeInt(bytes.length);
-        socket.writeBytes(cast bytes.getData());
-    }
-
-    private function socketDataHandler(e:ProgressEvent):Void {
-        try {
-//            trace("socketDataHandler");
-            var b = new flash.utils.ByteArray();
-            socket.readBytes(b);
-            var bs = Bytes.ofData(cast b);
-            addBytes(bs);
-        } catch (e:Dynamic) {
-            trace('error: ' + haxe.Json.stringify(e));
-        }
-    }
-
-    public function detach():Void {
-        socket.removeEventListener(Event.CLOSE, closeHandler);
-        socket.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
-        socket.removeEventListener(IOErrorEvent.NETWORK_ERROR, errorHandler);
-        socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, errorHandler);
-        socket.removeEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
-        socket.removeEventListener(Event.CONNECT, connectHandler);
-    }
-}
-#else
-class SocketConnection {
-    var socket:sys.net.Socket;
-
-    public function connect(host, port, onConnect, addBytes, onClose) {
-        this.onConnect = onConnect;
-        this.addBytes = addBytes;
-        this.onClose = onClose;
-        socket.connect(new sys.net.Host(host), port);
-        trace("connected");
-        onConnect();
-
-        var buffer = Bytes.alloc(1024);
-        var socks = [socket];
-        var timer = new haxe.Timer(100);
-        timer.run = function() {
-            try {
-                var r:Array<sys.net.Socket>;
-                do {
-                    r = sys.net.Socket.select(socks, null, null, 0.001).read;
-                    for (s in r) {
-                        var size = s.input.readBytes(buffer, 0, buffer.length);
-                        addBytes(buffer.sub(0, size));
-                    }
-                } while (r.length > 0);
-            } catch (e:haxe.io.Eof) {
-                timer.stop();
-                onClose();
-            } catch (e:Dynamic) {
-                trace(e);
-            }
-        };
-    }
-
-    public dynamic function onConnect():Void {}
-    public dynamic function onClose():Void {}
-    public dynamic function addBytes(bytes:Bytes):Void {}
-
-    public function new() {
-        socket = new sys.net.Socket();
-        socket.input.bigEndian = false;
-        socket.output.bigEndian = false;
-    }
-
-    public function writeMsg(msg:protohx.Message):Void {
-        var b = new BytesOutput();
-        msg.writeTo(b);
-        var bytes = b.getBytes();
-        socket.output.writeInt32(bytes.length);
-        socket.output.writeBytes(bytes, 0, bytes.length);
-    }
-}
-#end
 
 
 class MainClient extends flash.display.Sprite {

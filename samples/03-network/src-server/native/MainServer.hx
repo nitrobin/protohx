@@ -3,7 +3,6 @@ package native;
 import logic.SessionRegistry;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
-import haxe.CallStack;
 import sys.net.Socket;
 import neko.net.ThreadServer;
 import neko.Lib;
@@ -40,8 +39,7 @@ class NativeSession extends logic.Session {
             socket.output.flush();
         }catch(e:Dynamic){
             trace(e);
-            var stack = CallStack.toString(CallStack.exceptionStack());
-            trace(stack);
+            trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
         }
     }
 
