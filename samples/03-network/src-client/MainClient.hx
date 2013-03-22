@@ -71,12 +71,12 @@ class AddressSprite extends flash.display.Sprite {
     public var portTF:TextField;
     public var btn:TextField;
 
-    public function new() {
+    public function new(host, port) {
         super();
         hostTF = new TextField();
         hostTF.type = TextFieldType.INPUT;
         hostTF.defaultTextFormat.size = 24;
-        hostTF.text = "127.0.0.1";
+        hostTF.text = host;
         hostTF.border = true;
         hostTF.borderColor = 0x000000;
         hostTF.height = 28;
@@ -85,7 +85,7 @@ class AddressSprite extends flash.display.Sprite {
         portTF = new TextField();
         portTF.type = TextFieldType.INPUT;
         hostTF.defaultTextFormat.size = 24;
-        portTF.text = "5000";
+        portTF.text = Std.string(port);
         portTF.border = true;
         portTF.borderColor = 0x000000;
         portTF.y = 30;
@@ -111,6 +111,7 @@ class MainClient extends flash.display.Sprite {
     var msgQueue:MsgQueue;
     var players:IntMap<PlayerNode>;
     var s:SocketConnection;
+    var welcome:Sprite;
 
     public static function main() {
         flash.Lib.current.addChild(new MainClient());
@@ -122,22 +123,39 @@ class MainClient extends flash.display.Sprite {
         graphics.beginFill(0x888888);
         graphics.drawRect(0, 0, 400, 400);
         graphics.endFill();
-        star();
-    }
+        welcome = new Sprite();
 
-    private function star():Void {
-        var address = new AddressSprite();
+        var address = new AddressSprite("127.0.0.1", 5000);
         address.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
-            removeChild(address);
-            players = new IntMap<PlayerNode>();
-            msgQueue = new MsgQueue();
-             s = new SocketConnection();
             var host = address.hostTF.text;
             var port = Std.parseInt(address.portTF.text);
-            s.connect(host, port, onConnect, addBytes, onClose);
+            connect(host, port);
         });
-        addChild(address);
-     }
+        welcome.addChild(address);
+        var address2 = new AddressSprite("192.168.0.81", 5000);
+	address.y = 100;
+        address2.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
+            var host = address2.hostTF.text;
+            var port = Std.parseInt(address2.portTF.text);
+            connect(host, port);
+        });
+        welcome.addChild(address2);
+
+        start();
+
+    }
+
+    private function start():Void {
+	addChild(welcome);
+    }
+
+    private function connect(host, port):Void {
+        removeChild(welcome);
+        players = new IntMap<PlayerNode>();
+        msgQueue = new MsgQueue();
+        s = new SocketConnection();
+        s.connect(host, port, onConnect, addBytes, onClose);
+    }
 
     private function onClick(e:MouseEvent):Void {
         var msg = new ProtocolMessage();
