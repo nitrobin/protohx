@@ -712,12 +712,54 @@ public final class Proto2Haxe {
             content.append("\t}\n\n");
             break;
          case LABEL_REQUIRED:
-            content.append("\tpublic var ");
-            appendLowerCamelCase(content, fdp.getName());
-            content.append(":");
-            content.append(getActionScript3Type(scope, fdp));
-            content.append(";\n\n");
-            break;
+//            content.append("\tpublic var ");
+//            appendLowerCamelCase(content, fdp.getName());
+//            content.append(":");
+//            content.append(getActionScript3Type(scope, fdp));
+//            content.append(";\n\n");
+
+             content.append("\tprivate var ");
+             content.append(fdp.getName());
+             content.append("__field:");
+             content.append(getActionScript3Type(scope, fdp));
+             content.append(";\n\n");
+
+             content.append("\tpublic var ");
+             appendLowerCamelCase(content, fdp.getName());
+             //* haxe 3
+             content.append("(get,set):");
+             /*/
+             content.append("(get_");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append(",set_");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append("):");*/
+             content.append(getActionScript3Type(scope, fdp));
+             content.append(";\n\n");
+
+             content.append("\tpublic function set_");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append("(value:");
+             content.append(getActionScript3Type(scope, fdp));
+             content.append("):");
+             content.append(getActionScript3Type(scope, fdp));
+             content.append("{\n");
+             content.append("\t\treturn ");
+             content.append(fdp.getName());
+             content.append("__field = value;\n");
+             content.append("\t}\n\n");
+
+             content.append("\tpublic function get_");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append("():");
+             content.append(getActionScript3Type(scope, fdp));
+             content.append(" {\n");
+             content.append("\t\treturn ");
+             content.append(fdp.getName());
+             content.append("__field;\n");
+             content.append("\t}\n\n");
+
+             break;
          case LABEL_REPEATED:
             content.append("\tpublic var ");
             appendLowerCamelCase(content, fdp.getName());

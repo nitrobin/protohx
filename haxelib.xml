@@ -7,8 +7,8 @@
     <tag v="js"/>
     <tag v="cpp"/>
     <tag v="java"/>
-    <description>Сross-platform haxe implementation of "Google Protocol Buffers".  
+    <description>Сrossplatform implementation of "Google's Protocol Buffers" for haxe.
 	https://code.google.com/p/protobuf/	
 </description>
-    <version name="0.1">First release, basic features is working correctly</version>
+    <version name="0.2">Small code genaration changes. More samples.</version>
 </project>
