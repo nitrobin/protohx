@@ -1,11 +1,22 @@
-Protohx is cross-platform haxe implementation of "Google Protocol Buffers". 
-This is Haxe port of ActionScript3 protoc plugin "protoc-gen-as3".
+Protohx is crossplatform implementation of "Google's Protocol Buffers" for haxe 3. 
 
-WARNING: This project is still in alpha. Be careful for production using.
+This is partial port of ActionScript3 protoc plugin "protoc-gen-as3" for haxe 3. 
+Currently implemented only basic functionality: read/write messages from/to haxe.io.Bytes.
+
+
+## WARNING
+Project is still in alpha. Be careful for production using.
+
+
+## License
+BSD
+
 
 ## See also
-    * https://code.google.com/p/protobuf/
-    * https://code.google.com/p/protoc-gen-as3/
+    * https://code.google.com/p/protobuf/ - Official Google Protocol Buffers page
+    * https://code.google.com/p/protoc-gen-as3/ - ActionScript 3 protoc plugin
+    * https://github.com/david-alexander/protobuf-haxe - another haxe implementation (GPL)
+
 
 ## Supported Features
 ### This functionality ported from "protoc-gen-as3"
@@ -14,6 +25,7 @@ WARNING: This project is still in alpha. Be careful for production using.
     * Enumerations (as integer)
     * Packed and non-packed repeated fields
     * Extensions (converted to optional fields with "ext_" prefix)
+
 
 ## Tested targets 
     * flash
