@@ -46,11 +46,11 @@ class Utils {
         return  cast(haxe.Int64.getHigh(i), PT_Int);
     }
 
-    public static function newInt64(l:PT_Int, h:PT_Int):PT_Int64 {
+    public static function newInt64(h:PT_Int, l:PT_Int):PT_Int64 {
         return PT_Int64.make(h, l);
     }
 
-    public static function newUInt64(l:PT_Int, h:PT_Int):PT_UInt64 {
+    public static function newUInt64(h:PT_Int, l:PT_Int):PT_UInt64 {
         return PT_UInt64.make(h, l);
     }
 

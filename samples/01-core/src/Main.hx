@@ -166,7 +166,7 @@ class TestInt64 extends TestBase {
     public function testInt64() {
         function forInt64(l:PT_Int, h:PT_Int = 0) {
             var obj = new IntTestMessage();
-            obj.i64 = Utils.newInt64(l, h);
+            obj.i64 = Utils.newInt64(h, l);
             var copy = copyMsg(obj);
             assertTrue(copy.hasI64());
             assertEquals(obj.i64.getLow(), copy.i64.getLow());
