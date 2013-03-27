@@ -15,7 +15,11 @@ import java.io.*;
 import java.util.*;
 import java.math.*;
 public final class Proto2Haxe {
-    private static final String[] ACTIONSCRIPT_KEYWORDS = {
+    public static String[] sort(String[] a) {
+        Arrays.sort(a);
+        return a;
+    }
+    private static final String[] ACTIONSCRIPT_KEYWORDS = sort(new String[]{
       "as", "break", "case", "catch", "class", "const", "continue", "default",
       "delete", "do", "else", "extends", "false", "finally", "for",
       "function", "if", "implements", "import", "in", "instanceof",
@@ -23,7 +27,8 @@ public final class Proto2Haxe {
       "private", "protected", "public", "return", "super", "switch", "this",
       "throw", "to", "true", "try", "typeof", "use", "var", "void", "Void", "while",
       "with","callback","typedef","cast", "package"
-   };
+   });
+
    private static final class Scope<Proto> {
       // 如果 proto instanceOf Scope ，则这个 Scope 是对另一 Scope 的引用
       public final String fullName;
@@ -130,7 +135,7 @@ public final class Proto2Haxe {
          FieldDescriptorProto efdp, boolean export) {
 //      scope.addChild(efdp.getName().toUpperCase(), efdp, export);
        final Scope<DescriptorProto> scope = (Scope<DescriptorProto>) scope_.find(efdp.getExtendee());
-       final FieldDescriptorProto f = efdp.toBuilder().setName("ext_" + efdp.getName()).build();
+       final FieldDescriptorProto f = efdp/*.toBuilder().setName("ext_" + efdp.getName()).build()*/;
        final DescriptorProto.Builder builder = scope.proto.toBuilder();
        builder.addField(f);
        scope.proto = builder.build();
@@ -207,6 +212,11 @@ public final class Proto2Haxe {
       case TYPE_SFIXED32:
       case TYPE_SINT32:
       case TYPE_ENUM:
+      case TYPE_INT64:
+      case TYPE_UINT64:
+      case TYPE_FIXED64:
+      case TYPE_SFIXED64:
+      case TYPE_SINT64:
          return true;
       default:
          return false;
@@ -580,6 +590,8 @@ public final class Proto2Haxe {
             System.err.println("Warning: Group is not supported.");
             continue;
          }
+         content.append("\n\t/** " + fdp.getLabel() + " " + fdp.getName() + " : "+ fdp.getType() +" = " + fdp.getNumber() +" */\n");
+
 //         content.append("\t/**\n\t\t *  @private\n\t\t */\n");
 //         content.append("\tpublic static/*const*/ inline var ");
 //         content.append(fdp.getName().toUpperCase());
@@ -591,13 +603,7 @@ public final class Proto2Haxe {
          assert(fdp.hasLabel());
          switch (fdp.getLabel()) {
          case LABEL_OPTIONAL:
-            content.append("\tprivate var ");
-            content.append(fdp.getName());
-            content.append("__field:");
-            content.append(getActionScript3Type(scope, fdp));
-            content.append(";\n\n");
-
-             content.append("\tpublic var ");
+             content.append("\t@:isVar public var ");
              appendLowerCamelCase(content, fdp.getName());
              //* haxe 3
              content.append("(get,set):");
@@ -631,9 +637,9 @@ public final class Proto2Haxe {
                content.append(Integer.toHexString(~(1 << valueTypeBit)));
                content.append(";\n");
 
-               content.append("\t\t");
-               content.append(fdp.getName());
-               content.append("__field = " + getBlankObject(scope, fdp) +";\n");
+               content.append("\t\tthis.");
+               appendLowerCamelCase(content, fdp.getName());
+               content.append(" = " + getBlankObject(scope, fdp) +";\n");
                content.append("\t}\n\n");
 
                content.append("\tinline public function has");
@@ -658,25 +664,25 @@ public final class Proto2Haxe {
                content.append(" |= 0x");
                content.append(Integer.toHexString(1 << valueTypeBit));
                content.append(";\n");
-               content.append("\t\treturn ");
-               content.append(fdp.getName());
-               content.append("__field = value;\n");
+               content.append("\t\treturn this.");
+               appendLowerCamelCase(content, fdp.getName());
+               content.append(" = value;\n");
                content.append("\t}\n\n");
             } else {
                content.append("\tpublic function clear");
                appendUpperCamelCase(content, fdp.getName());
                content.append("():Void {\n");
-               content.append("\t\t");
-               content.append(fdp.getName());
-               content.append("__field = null;\n");
+               content.append("\t\tthis.");
+               appendLowerCamelCase(content, fdp.getName());
+               content.append(" = null;\n");
                content.append("\t}\n\n");
 
                content.append("\tinline public function has");
                appendUpperCamelCase(content, fdp.getName());
                content.append("():Bool {\n");
-               content.append("\t\treturn ");
-               content.append(fdp.getName());
-               content.append("__field != null;\n");
+               content.append("\t\treturn this.");
+               appendLowerCamelCase(content, fdp.getName());
+               content.append(" != null;\n");
                content.append("\t}\n\n");
 
                content.append("\tpublic function set_");
@@ -686,9 +692,9 @@ public final class Proto2Haxe {
                 content.append("):");
                 content.append(getActionScript3Type(scope, fdp));
                 content.append("{\n");
-               content.append("\t\treturn ");
-               content.append(fdp.getName());
-               content.append("__field = value;\n");
+               content.append("\t\treturn this.");
+                appendLowerCamelCase(content, fdp.getName());
+               content.append(" = value;\n");
                content.append("\t}\n\n");
             }
 
@@ -706,9 +712,9 @@ public final class Proto2Haxe {
                content.append(";\n");
                content.append("\t\t}\n");
             }
-            content.append("\t\treturn ");
-            content.append(fdp.getName());
-            content.append("__field;\n");
+            content.append("\t\treturn this.");
+            appendLowerCamelCase(content, fdp.getName());
+            content.append(";\n");
             content.append("\t}\n\n");
             break;
          case LABEL_REQUIRED:
@@ -718,13 +724,7 @@ public final class Proto2Haxe {
 //            content.append(getActionScript3Type(scope, fdp));
 //            content.append(";\n\n");
 
-             content.append("\tprivate var ");
-             content.append(fdp.getName());
-             content.append("__field:");
-             content.append(getActionScript3Type(scope, fdp));
-             content.append(";\n\n");
-
-             content.append("\tpublic var ");
+             content.append("\t@:isVar public var ");
              appendLowerCamelCase(content, fdp.getName());
              //* haxe 3
              content.append("(get,set):");
@@ -744,9 +744,9 @@ public final class Proto2Haxe {
              content.append("):");
              content.append(getActionScript3Type(scope, fdp));
              content.append("{\n");
-             content.append("\t\treturn ");
-             content.append(fdp.getName());
-             content.append("__field = value;\n");
+             content.append("\t\treturn this.");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append(" = value;\n");
              content.append("\t}\n\n");
 
              content.append("\tpublic function get_");
@@ -754,9 +754,9 @@ public final class Proto2Haxe {
              content.append("():");
              content.append(getActionScript3Type(scope, fdp));
              content.append(" {\n");
-             content.append("\t\treturn ");
-             content.append(fdp.getName());
-             content.append("__field;\n");
+             content.append("\t\treturn this.");
+             appendLowerCamelCase(content, fdp.getName());
+             content.append(";\n");
              content.append("\t}\n\n");
 
              break;
@@ -772,7 +772,7 @@ public final class Proto2Haxe {
          }
       }
 
-       content.append("\tpublic function new(){\n\t\t\tsuper();\n");
+       content.append("\tpublic function new(){\n\t\tsuper();\n");
        for (FieldDescriptorProto fdp : scope.proto.getFieldList()) {
            if (fdp.getType() == FieldDescriptorProto.Type.TYPE_GROUP) {
                System.err.println("Warning: Group is not supported.");
@@ -825,9 +825,9 @@ public final class Proto2Haxe {
             content.append(");\n");
             content.append("\t\t\tprotohx.WriteUtils.write__");
             content.append(fdp.getType().name());
-            content.append("(output, ");
-            content.append(fdp.getName());
-            content.append("__field);\n");
+            content.append("(output, this.");
+            appendLowerCamelCase(content, fdp.getName());
+            content.append(");\n");
             content.append("\t\t}\n");
             break;
          case LABEL_REQUIRED:

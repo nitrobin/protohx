@@ -24,7 +24,7 @@ BSD
     * Nested messages
     * Enumerations (as integer)
     * Packed and non-packed repeated fields
-    * Extensions (converted to optional fields with "ext_" prefix)
+    * Extensions (converted to optional fields)
 
 
 ## Tested targets 

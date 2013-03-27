@@ -1,4 +1,5 @@
 package ;
+import test.Foo;
 import protohx.Message;
 import haxe.io.BytesOutput;
 import google.protobuf.compiler.CodeGeneratorRequest;
@@ -167,9 +168,7 @@ class TestInt64 extends TestBase {
             var obj = new IntTestMessage();
             obj.i64 = Utils.newInt64(l, h);
             var copy = copyMsg(obj);
-#if !java
-            assertTrue(copy.i64 != null);
-#end
+            assertTrue(copy.hasI64());
             assertEquals(obj.i64.getLow(), copy.i64.getLow());
             assertEquals(obj.i64.getHigh(), copy.i64.getHigh());
         }
@@ -276,8 +275,10 @@ class TestComplex extends TestBase {
             assertEquals(c, b);
         }
 
-        obj.attach = null;
-        copy.attach = null;
+        var foo = new Foo();
+        assertEquals("1.0", foo.version);
+
+        assertEquals(protohx.MessageUtils.toJson(obj), protohx.MessageUtils.toJson(copy));
     }
 
 }

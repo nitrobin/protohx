@@ -58,6 +58,7 @@ message IntTestMessage {
 }
 
 message Foo {
+  required string   version      = 1 [default = "1.0"];
   extensions 100 to 199;
 }
 

@@ -194,13 +194,6 @@ class Message {
 //        return null;
 ////        return TextFormat.printToString(this);
 //    }
-//TODO
-//    /**
-//     * Get information of a field.
-//     */
-//    public static function getExtensionByName(name:String):IFieldDescriptor {
-//        return BaseFieldDescriptor.getExtensionByName(name);
-//    }
 /**
      * @private
      */
@@ -208,10 +201,10 @@ class Message {
         return null;
     }
     public function defaultInt64():PT_Int64 {
-        return null;
+        return Utils.newInt64(0, 0);
     }
     public function defaultUInt64():PT_UInt64 {
-        return null;
+        return Utils.newUInt64(0, 0);
     }
 
     public static function stringToByteArray(s:String):PT_Bytes {
@@ -224,12 +217,5 @@ class Message {
                 writeUnknown(output, tag);
             }
         }
-
-//    if (scope.proto.getExtensionRangeCount() > 0) {
-//        content.append("\t\t\tfor (var fieldKey:* in this) {\n");
-//        content.append("\t\t\t\tsuper.writeExtensionOrUnknown(output, fieldKey);\n");
-//        content.append("\t\t\t\tsuper.writeUnknown(output, fieldKey);\n");
-//        content.append("\t\t\t}\n");
-//    }
     }
 }

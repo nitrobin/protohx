@@ -67,12 +67,12 @@ class SessionRegistry {
         session.incomeMsgQueue.addBytes(bytes);
         while (session.incomeMsgQueue.hasMsg()) {
             var msg:ProtocolMessage = session.incomeMsgQueue.popMsg();
+            trace(protohx.MessageUtils.toJson(msg));
             handleMsg(session, NEMsg(msg.type, msg));
         }
     }
 
     private function handleMsg(session:Session, e:NetEvent) {
-//        log("SERVER MSG: " + haxe.Json.stringify(msg));
         switch(e){
         case NEConnect:{ /*pass*/};
         case NEDisconnect:{
