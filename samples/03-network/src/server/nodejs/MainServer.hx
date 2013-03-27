@@ -1,12 +1,12 @@
-package nodejs;
+package server.nodejs;
 #if js
-import logic.BakedMsg;
-import logic.SessionRegistry;
-import logic.Session;
+import server.logic.BakedMsg;
+import server.logic.SessionRegistry;
+import server.logic.Session;
 import haxe.io.Bytes;
 import js.Node;
-import nodejs.NodeUtils;
-using nodejs.NodeUtils;
+import  server.nodejs.NodeUtils;
+using  server.nodejs.NodeUtils;
 
 class NodeSession extends Session {
 

@@ -1,6 +1,6 @@
-package nodejs;
+package server.nodejs;
 #if js
-import logic.Session;
+import  server.logic.Session;
 import haxe.io.BytesOutput;
 import js.Node;
 

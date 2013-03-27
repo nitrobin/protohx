@@ -2,7 +2,7 @@
 <project>
 	
 	<meta title="protohx - network test" package="org.bitbucket.nitrobin.protohx.network" version="1.0.0" company="protohx" />
-	<app main="MainClient" path="out" file="protohx-samples-network-client" />
+	<app main="client.MainClient" path="out" file="protohx-samples-network-client" />
     <window width="320" height="320"/>
 	<source path="src" />
 	<source path="src-client" />

@@ -1,4 +1,4 @@
-package net;
+package common;
 import samples.ProtocolMessage;
 import haxe.io.BytesInput;
 import haxe.io.BytesBuffer;

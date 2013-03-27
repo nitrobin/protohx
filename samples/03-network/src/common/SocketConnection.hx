@@ -1,4 +1,4 @@
-package net;
+package common;
 
 import haxe.io.BytesData;
 import haxe.io.BytesOutput;

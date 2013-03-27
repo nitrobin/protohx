@@ -1,4 +1,6 @@
-package ;
+package client;
+
+#if (flash || nme)
 import haxe.remoting.SocketConnection;
 import flash.text.TextFieldType;
 import samples.PlayerData;
@@ -6,8 +8,8 @@ import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
 
-import net.MsgQueue;
-import net.SocketConnection;
+import common.MsgQueue;
+import common.SocketConnection;
 
 import protohx.Message;
 import protohx.ProtocolTypes;
@@ -221,5 +223,5 @@ class MainClient extends flash.display.Sprite {
             }
         }
     }
-
 }
+#end

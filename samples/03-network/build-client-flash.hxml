@@ -4,9 +4,8 @@
 
 --next
 
--main MainClient
+-main client.MainClient
 -cp src
--cp src-client
 -cp out/src-gen
 -D haxe3
 -lib protohx

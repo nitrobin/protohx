@@ -1,13 +1,17 @@
-package native;
+package server.native;
 
-import logic.SessionRegistry;
+#if neko
+
+import server.logic.SessionRegistry;
+import server.logic.Session;
+import server.logic.BakedMsg;
 import haxe.io.BytesOutput;
 import haxe.io.Bytes;
 import sys.net.Socket;
 import neko.net.ThreadServer;
 import neko.Lib;
 
-class NativeSession extends logic.Session {
+class NativeSession extends Session {
 
     public var socket:Socket;
 
@@ -23,11 +27,11 @@ class NativeSession extends logic.Session {
         socket.close();
     }
 
-    public override function bakeMsg(msg:protohx.Message):logic.BakedMsg {
-        return new logic.BakedMsg(msg);
+    public override function bakeMsg(msg:protohx.Message):BakedMsg {
+        return new BakedMsg(msg);
     }
 
-    public override function writeMsgBaked(msg:logic.BakedMsg):Void {
+    public override function writeMsgBaked(msg:BakedMsg):Void {
         writeMsg(msg.msg);
     }
 
@@ -89,4 +93,5 @@ class MainServer extends ThreadServer<NativeSession, Bytes> {
         server.run("0.0.0.0", 5000);
     }
 }
+#end
 

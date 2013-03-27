@@ -1,4 +1,4 @@
-package logic;
+package server.logic;
 class BakedMsg {
     public var msg:protohx.Message;
     public var data:Dynamic;

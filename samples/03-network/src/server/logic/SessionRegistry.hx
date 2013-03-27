@@ -1,4 +1,4 @@
-package logic;
+package server.logic;
 import samples.RemovePlayerRes;
 import samples.PlayerData;
 import samples.LoginRes;

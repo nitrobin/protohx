@@ -1,5 +1,5 @@
-package logic;
-import net.MsgQueue;
+package server.logic;
+import common.MsgQueue;
 import samples.ProtocolMessage;
 import samples.PlayerData;
 

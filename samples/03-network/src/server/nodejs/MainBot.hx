@@ -1,17 +1,17 @@
-package nodejs;
+package server.nodejs;
 #if js
 import haxe.Timer;
 import samples.PlayerData;
 import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
-import net.MsgQueue;
-import logic.SessionRegistry;
-import logic.Session;
+import common.MsgQueue;
+import server.logic.SessionRegistry;
+import server.logic.Session;
 import haxe.io.Bytes;
 import js.Node;
-import nodejs.NodeUtils;
-using nodejs.NodeUtils;
+import server.nodejs.NodeUtils;
+using  server.nodejs.NodeUtils;
 
 class MainBot {
     private static var net:NodeNet = Node.net;
