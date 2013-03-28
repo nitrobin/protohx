@@ -40,7 +40,16 @@ public class JavaMain {
             Calc.OutputMessage.Builder builder = Calc.OutputMessage.newBuilder();
             builder.setSuccess(true);
             builder.setValue(acc);
+
             builder.setMsg("ok");
+
+//            builder.setMsg("ok: " +
+//                    (acc.hasFi64() ? acc.getFi64() : "null") + ":" +
+//                    (acc.hasSfi64() ? acc.getSfi64() : "null") + ":" +
+//                    (acc.hasUi64() ? acc.getUi64() : "null") + ":" +
+//                    (acc.hasSi64() ? acc.getSi64() : "null") + ":" +
+//                    (acc.hasI64() ? acc.getI64() : "null"));
+
             return builder.build();
         } catch (Throwable e) {
             Calc.OutputMessage.Builder builder = Calc.OutputMessage.newBuilder();
@@ -54,86 +63,61 @@ public class JavaMain {
         if (topValue.hasI32()) {
             final int a = topValue.getI32();
             final int b = acc.getI32();
-            final int r;
-            if (opCode == Calc.OpCode.ADD) {
-                r = (a + b);
-            } else if (opCode == Calc.OpCode.SUB) {
-                r = (a - b);
-            } else if (opCode == Calc.OpCode.MUL) {
-                r = (a * b);
-            } else if (opCode == Calc.OpCode.DIV) {
-                r = (a / b);
-            } else {
-                r = 0;
-            }
+            final int r = doInt32(opCode, a, b);
             acc.setI32(r);
+        }
+        if (topValue.hasFi32()) {
+            final int a = topValue.getFi32();
+            final int b = acc.getFi32();
+            final int r = doInt32(opCode, a, b);
+            acc.setFi32(r);
         }
         if (topValue.hasUi32()) {
             final int a = topValue.getUi32();
             final int b = acc.getUi32();
-            final int r;
-            if (opCode == Calc.OpCode.ADD) {
-                r = (a + b);
-            } else if (opCode == Calc.OpCode.SUB) {
-                r = (a - b);
-            } else if (opCode == Calc.OpCode.MUL) {
-                r = (a * b);
-            } else if (opCode == Calc.OpCode.DIV) {
-                r = (a / b);
-            } else {
-                r = 0;
-            }
+            final int r = doInt32(opCode, a, b);
             acc.setUi32(r);
         }
         if (topValue.hasSi32()) {
             final int a = topValue.getSi32();
             final int b = acc.getSi32();
-            final int r;
-            if (opCode == Calc.OpCode.ADD) {
-                r = (a + b);
-            } else if (opCode == Calc.OpCode.SUB) {
-                r = (a - b);
-            } else if (opCode == Calc.OpCode.MUL) {
-                r = (a * b);
-            } else if (opCode == Calc.OpCode.DIV) {
-                r = (a / b);
-            } else {
-                r = 0;
-            }
+            final int r = doInt32(opCode, a, b);
             acc.setSi32(r);
+        }
+        if (topValue.hasSfi32()) {
+            final int a = topValue.getSfi32();
+            final int b = acc.getSfi32();
+            final int r = doInt32(opCode, a, b);
+            acc.setSfi32(r);
+        }
+        if (topValue.hasFi64()) {
+            final long a = topValue.getFi64();
+            final long b = acc.getFi64();
+            final long r = doInt32(opCode, a, b);
+            acc.setFi64(r);
+        }
+        if (topValue.hasSfi64()) {
+            final long a = topValue.getSfi64();
+            final long b = acc.getSfi64();
+            final long r = doInt32(opCode, a, b);
+            acc.setSfi64(r);
         }
         if (topValue.hasI64()) {
             final long a = topValue.getI64();
             final long b = acc.getI64();
-            final long r;
-            if (opCode == Calc.OpCode.ADD) {
-                r = (a + b);
-            } else if (opCode == Calc.OpCode.SUB) {
-                r = (a - b);
-            } else if (opCode == Calc.OpCode.MUL) {
-                r = (a * b);
-            } else if (opCode == Calc.OpCode.DIV) {
-                r = (a / b);
-            } else {
-                r = 0;
-            }
+            final long r = doInt32(opCode, a, b);
             acc.setI64(r);
+        }
+        if (topValue.hasSi64()) {
+            final long a = topValue.getSi64();
+            final long b = acc.getSi64();
+            final long r = doInt32(opCode, a, b);
+            acc.setSi64(r);
         }
         if (topValue.hasUi64()) {
             final long a = topValue.getUi64();
             final long b = acc.getUi64();
-            final long r;
-            if (opCode == Calc.OpCode.ADD) {
-                r = (a + b);
-            } else if (opCode == Calc.OpCode.SUB) {
-                r = (a - b);
-            } else if (opCode == Calc.OpCode.MUL) {
-                r = (a * b);
-            } else if (opCode == Calc.OpCode.DIV) {
-                r = (a / b);
-            } else {
-                r = 0;
-            }
+            final long r = doInt32(opCode, a, b);
             acc.setUi64(r);
         }
         if (topValue.hasF()) {
@@ -170,5 +154,37 @@ public class JavaMain {
             }
             acc.setD(r);
         }
+    }
+
+    private static long doInt32(Calc.OpCode opCode, long a, long b) {
+        final long r;
+        if (opCode == Calc.OpCode.ADD) {
+            r = (a + b);
+        } else if (opCode == Calc.OpCode.SUB) {
+            r = (a - b);
+        } else if (opCode == Calc.OpCode.MUL) {
+            r = (a * b);
+        } else if (opCode == Calc.OpCode.DIV) {
+            r = (a / b);
+        } else {
+            r = 0;
+        }
+        return r;
+    }
+
+    private static int doInt32(Calc.OpCode opCode, int a, int b) {
+        int r;
+        if (opCode == Calc.OpCode.ADD) {
+            r = (a + b);
+        } else if (opCode == Calc.OpCode.SUB) {
+            r = (a - b);
+        } else if (opCode == Calc.OpCode.MUL) {
+            r = (a * b);
+        } else if (opCode == Calc.OpCode.DIV) {
+            r = (a / b);
+        } else {
+            r = 0;
+        }
+        return r;
     }
 }

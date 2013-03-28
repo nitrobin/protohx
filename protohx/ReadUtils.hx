@@ -151,8 +151,8 @@ class ReadUtils {
         var result:PT_Int64 = read__TYPE_INT64(input);
         var low:PT_Int = Utils.getLow(result);
         var high:PT_Int = Utils.getHigh(result);
-        var lowNew = ZigZag.decode64low(high, low);
-        var highNew = ZigZag.decode64high(high, low);
+        var lowNew = ZigZag.decode64low(low, high);
+        var highNew = ZigZag.decode64high(low, high);
         return Utils.newInt64(highNew, lowNew);
     }
     //TODO check types
