@@ -67,7 +67,7 @@ class SessionRegistry {
         session.incomeMsgQueue.addBytes(bytes);
         while (session.incomeMsgQueue.hasMsg()) {
             var msg:ProtocolMessage = session.incomeMsgQueue.popMsg();
-            trace(protohx.MessageUtils.toJson(msg));
+            trace("IN: "+protohx.MessageUtils.toJson(msg));
             handleMsg(session, NEMsg(msg.type, msg));
         }
     }

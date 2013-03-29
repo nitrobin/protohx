@@ -28,7 +28,7 @@ class MainBot {
         var player:PlayerData = null;
         var timer:Timer = null;
         client.on(NodeC.EVENT_STREAM_CONNECT, function() {
-            console.log('client connected to: ${client.getAP()}');
+            console.log('client connected to: ${client.addressPort()}');
             var msg = new ProtocolMessage();
             msg.type = MsgType.LOGIN_REQ;
             msg.loginReq = new LoginReq();

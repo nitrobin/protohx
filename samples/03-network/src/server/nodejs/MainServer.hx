@@ -26,10 +26,12 @@ class NodeSession extends Session {
     }
 
     public override function writeMsgBaked(msg:BakedMsg):Void {
+        trace("OUT: "+protohx.MessageUtils.toJson(msg.msg));
         socket.writeSafe(msg.data);
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
+        trace("OUT: "+protohx.MessageUtils.toJson(msg));
         socket.writeMsgSafe(msg);
     }
 }
@@ -40,8 +42,9 @@ class MainServer {
     private static var console:NodeConsole = Node.console;
 
     public static function main() {
+        var sr:SessionRegistry = new SessionRegistry();
         flashCrossDomain();
-        tcpTest();
+        tcpTest(sr);
         haxe.Timer.delay(function(){
             for(i in 0...10){
                 MainBot.tcpClientTest();
@@ -49,15 +52,14 @@ class MainServer {
         }, 1000);
     }
 
-    public static function tcpTest() {
-        var sr:SessionRegistry = new SessionRegistry();
+    public static function tcpTest(sr:SessionRegistry) {
         var server:NodeNetServer = net.createServer({allowHalfOpen:true}, function(client:NodeNetSocket) {
-            client.on(NodeC.EVENT_STREAM_CONNECT, function() {
+//            client.on(NodeC.EVENT_STREAM_CONNECT, function() {
                 var session = new NodeSession(client);
                 client.setSession(session);
                 sr.sessionConnect(session);
                 console.log('server got client connection: ${client.getAP()}');
-            });
+//            });
 //            client.on(NodeC.EVENT_STREAM_DRAIN, function() {
 //                console.log('client drain: ${client.getAP()}');
 //            });
