@@ -1,12 +1,13 @@
 
 -cmd haxelib run protohx generate protohx.json
 -cmd mkdir -p out
-
+-cmd cp index.html out
 -cmd haxelib run nme build html5
+-cmd cp out/html5/bin/protohx-samples-network-client.js out/
 
 --next
 
--main server.nodejs.MainServer
+-main server.nodejs.SocketIoServer
 -cp src
 -cp out/src-gen
 -D haxe3
@@ -14,8 +15,8 @@
 -lib nodejs
 
 
--js out/MainServer.js
+-js out/SocketIoServer.js
 
 --next
 
--cmd node out/MainServer.js
+-cmd node out/SocketIoServer.js

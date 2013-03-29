@@ -22,12 +22,12 @@ class NodeSession extends Session {
     }
 
     public override function bakeMsg(msg:protohx.Message):BakedMsg {
-        return new BakedMsg(msg, msg.toFrame());
+        return new BakedMsg(msg, null);
     }
 
     public override function writeMsgBaked(msg:BakedMsg):Void {
         trace("OUT: "+protohx.MessageUtils.toJson(msg.msg));
-        socket.writeSafe(msg.data);
+        socket.writeSafe(msg.msg.toFrame());
     }
 
     public override function writeMsg(msg:protohx.Message):Void {

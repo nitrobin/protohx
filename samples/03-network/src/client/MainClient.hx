@@ -73,7 +73,7 @@ class AddressSprite extends flash.display.Sprite {
     public var portTF:TextField;
     public var btn:TextField;
 
-    public function new(host, port) {
+    public function new(host:String, port:Int) {
         super();
         hostTF = new TextField();
         hostTF.type = TextFieldType.INPUT;
@@ -96,7 +96,7 @@ class AddressSprite extends flash.display.Sprite {
 
         btn = new TextField();
         hostTF.defaultTextFormat.size = 24;
-        btn.text = "connect";
+        btn.text = "connect "+host+":" + port;
         btn.border = true;
         btn.borderColor = 0xff0000;
         btn.backgroundColor = 0x00ff00;
@@ -121,20 +121,24 @@ class MainClient extends flash.display.Sprite {
 
     public function new() {
         super();
+        var port = 5000;
+        #if js
+        port = 5001;
+        #end
         graphics.clear();
         graphics.beginFill(0x888888);
         graphics.drawRect(0, 0, 400, 400);
         graphics.endFill();
         welcome = new Sprite();
 
-        var address = new AddressSprite("127.0.0.1", 5000);
+        var address = new AddressSprite("127.0.0.1", port);
         address.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
             var host = address.hostTF.text;
             var port = Std.parseInt(address.portTF.text);
             connect(host, port);
         });
         welcome.addChild(address);
-        var address2 = new AddressSprite("192.168.0.81", 5000);
+        var address2 = new AddressSprite("192.168.0.88", port);
 	address.y = 100;
         address2.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
             var host = address2.hostTF.text;
