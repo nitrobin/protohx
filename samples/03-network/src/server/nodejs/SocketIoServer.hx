@@ -30,10 +30,12 @@ class SocketIoSession extends Session {
     }
 
     public override function writeMsgBaked(msg:BakedMsg):Void {
+        trace("OUT: "+protohx.MessageUtils.toJson(msg.msg));
         writeMsgSafe_(msg.msg.msgToFrameBytes());
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
+        trace("OUT: "+protohx.MessageUtils.toJson(msg));
         writeMsgSafe_(msg.msgToFrameBytes());
     }
 }
