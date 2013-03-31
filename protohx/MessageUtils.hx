@@ -18,9 +18,12 @@ class MessageUtils {
             return value;
         } else if (Std.is(value, Bytes)) {
             return cast(value, Bytes).toHex();
-// java target fail on Std.is(value, Int64)
-//        } else if (Std.is(value, Int64)) {
-//            return cast(value, Int64).toStr();
+#if java
+        } else if (  java untyped __java__('value instanceof java.lang.Long')) {
+#else
+        } else if (Std.is(value, Int64)) {
+#end
+            return cast(value, Int64).toStr();
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};
             for (f in Reflect.fields(value)) {
