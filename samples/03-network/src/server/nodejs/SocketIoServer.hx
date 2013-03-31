@@ -47,7 +47,7 @@ class SocketIoServer {
 
     public static function main() {
         var sr:SessionRegistry = new SessionRegistry();
-        MainServer.tcpTest(sr);
+        //MainServer.tcpTest(sr);
         tcpTest(sr);
     }
 
@@ -62,7 +62,11 @@ class SocketIoServer {
         , fs = require('fs')
         , console = require('console')
 
-        app.listen(5001);
+        app.listen(process.env.VMC_APP_PORT || 5001);
+
+        io.configure('development', function(){
+            io.set('transports', ['xhr-polling']);
+        });
 
         function handler (req, res) {
             console.log(req.url);

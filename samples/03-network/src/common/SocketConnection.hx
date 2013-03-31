@@ -182,7 +182,8 @@ class SocketConnection {
         this.onClose = onClose;
         var self = this;
         untyped __js__("
-        self.socket = io.connect('http://'+host+':'+port);
+        //self.socket = io.connect('http://'+host+':'+port);
+        self.socket = io.connect();
         this.socket.on('connect', function () {
             onConnect();
             self.socket.on('message', function (msg) {

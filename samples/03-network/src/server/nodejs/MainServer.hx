@@ -46,7 +46,7 @@ class MainServer {
         flashCrossDomain();
         tcpTest(sr);
         haxe.Timer.delay(function(){
-            for(i in 0...10){
+            for(i in 0...20){
                 MainBot.tcpClientTest();
             }
         }, 1000);

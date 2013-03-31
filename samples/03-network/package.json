@@ -1,0 +1,13 @@
+{
+  "name": "protohx",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {
+    "socket.io": "0.9.x"
+  }
+}
