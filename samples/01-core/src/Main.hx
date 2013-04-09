@@ -6,7 +6,7 @@ import google.protobuf.compiler.CodeGeneratorRequest;
 import test.IntTestMessage;
 import test.complexmessage.Point;
 import test.complexmessage.MsgType;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 import test.ComplexMessage;
 import haxe.io.Bytes;
 import haxe.Int64;
@@ -166,7 +166,7 @@ class TestInt64 extends TestBase {
     public function testInt64() {
         function forInt64(l:PT_Int, h:PT_Int = 0) {
             var obj = new IntTestMessage();
-            obj.i64 = Utils.newInt64(h, l);
+            obj.i64 = Protohx.newInt64(h, l);
             var copy = copyMsg(obj);
             assertTrue(copy.hasI64());
             assertEquals(obj.i64.getLow(), copy.i64.getLow());
@@ -181,6 +181,7 @@ class TestInt64 extends TestBase {
         forInt64(0xefffffff);
         forInt64(0);
 
+        forInt64(0, 0x1);
         forInt64(0, 0xff);
         forInt64(0, 0xffff);
         forInt64(0, 0xffffff);
@@ -277,8 +278,6 @@ class TestComplex extends TestBase {
 
         var foo = new Foo();
         assertEquals("1.0", foo.version);
-
-        assertEquals(protohx.MessageUtils.toJson(obj), protohx.MessageUtils.toJson(copy));
     }
 
 }

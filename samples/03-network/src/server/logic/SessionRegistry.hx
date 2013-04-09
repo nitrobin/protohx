@@ -1,9 +1,11 @@
 package server.logic;
 import samples.RemovePlayerRes;
+import samples.ClientType;
 import samples.PlayerData;
 import samples.LoginRes;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
+import haxe.ds.IntMap;
 
 enum NetEvent{
     NEConnect;
@@ -18,6 +20,10 @@ class SessionRegistry {
     private var sessions:List<Session>;
     private var sessionId:Int;
 
+    private var sDate:Date;
+    private var byCT:IntMap<Int>;
+    private var byCP:IntMap<Int>;
+
     private function log(msg):Void {
         trace(msg);
     }
@@ -30,7 +36,41 @@ class SessionRegistry {
     public function new() {
         sessions = new List<Session>();
         sessionId = 0;
+        sDate = Date.now();
+        byCT = new IntMap<Int>();
+        byCP = new IntMap<Int>();
     }
+
+    public function scanPlayer(playerData:PlayerData):Void {
+        var t = byCT.get(playerData.clientType);
+        byCT.set(playerData.clientType, t == null ? 1 : t + 1);
+        var p = byCP.get(playerData.clientPlatform);
+        byCP.set(playerData.clientPlatform, p == null ? 1 : p + 1);
+    }
+
+    public function getStatisticsStr():String {
+        var online = 0;
+        forEachSessions(isAuthorized, function(s:Session):Void{
+            online++;
+        });
+        var byTypes = {};
+        for(key in byCT.keys()){
+            Reflect.setField(byTypes, common.Config.getTypeName(key), byCT.get(key));
+        }
+        var byPlatforms = {};
+        for(key in byCP.keys()){
+            Reflect.setField(byPlatforms, common.Config.getPlatformName(key), byCP.get(key));
+        }
+        return haxe.Json.stringify({
+             "sDate":sDate,
+             "nowDate":Date.now(),
+             "playersHandled":sessionId,
+             "playersOnline":online,
+             "byClientType":byTypes,
+             "byClientPlatform":byPlatforms
+         });
+    }
+
 
     private function registerSession(session:Session) {
         session.id = nextSessionId();
@@ -97,10 +137,16 @@ class SessionRegistry {
             }
             var playerData = new PlayerData();
             playerData.id = session.id;
-            playerData.nick = msg.loginReq.nick;
+            if(msg.loginReq.clientType == ClientType.CT_BOT){
+                playerData.nick = "bot" + session.id;
+            } else {
+                playerData.nick = "usr" + session.id;
+            }
             playerData.x = Std.int(Math.random() * MAX_X);
             playerData.y = Std.int(Math.random() * MAX_Y);
             playerData.status = "hi!";
+            playerData.clientType = msg.loginReq.clientType;
+            playerData.clientPlatform = msg.loginReq.clientPlatform;
             session.player = playerData;
 
             var respMsg = new ProtocolMessage();
@@ -123,6 +169,7 @@ class SessionRegistry {
                     session.writeMsg(addOtherPlayer);
                 }
             });
+            scanPlayer(playerData);
         };
         case NEMsg(MsgType.UPDATE_PLAYER_REQ, msg): {
             var player = session.player;

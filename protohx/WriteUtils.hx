@@ -9,7 +9,7 @@
 // as listed at <url: http://www.opensource.org/licenses/bsd-license.php >.
 
 package protohx;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 using haxe.Int64;
 
 class WriteUtils {
@@ -67,10 +67,10 @@ class WriteUtils {
         output.writeFloat(value);
     }
     public static function write__TYPE_INT64(output:PT_OutputStream, value:PT_Int64):Void {
-        writeVarint64(output, Utils.getLow(value), Utils.getHigh(value));
+        writeVarint64(output, Protohx.getLow(value), Protohx.getHigh(value));
     }
     public static function write__TYPE_UINT64(output:PT_OutputStream, value:PT_UInt64):Void {
-        writeVarint64(output, Utils.getLow(value), Utils.getHigh(value));
+        writeVarint64(output, Protohx.getLow(value), Protohx.getHigh(value));
     }
     public static function write__TYPE_INT32(output:PT_OutputStream, value:PT_Int):Void {
         if (value < 0) {
@@ -80,8 +80,8 @@ class WriteUtils {
         }
     }
     public static function write__TYPE_FIXED64(output:PT_OutputStream, value:PT_UInt64):Void {
-        output.writeInt(Utils.getLow(value));
-        output.writeInt(Utils.getHigh(value));
+        output.writeInt(Protohx.getLow(value));
+        output.writeInt(Protohx.getHigh(value));
     }
     public static function write__TYPE_FIXED32(output:PT_OutputStream, value:PT_Int):Void {
         output.writeInt(value);
@@ -122,16 +122,16 @@ class WriteUtils {
         output.writeInt(value);
     }
     public static function write__TYPE_SFIXED64(output:PT_OutputStream, value:PT_Int64):Void {
-        output.writeInt(Utils.getLow(value));
-        output.writeInt(Utils.getHigh(value));
+        output.writeInt(Protohx.getLow(value));
+        output.writeInt(Protohx.getHigh(value));
     }
     public static function write__TYPE_SINT32(output:PT_OutputStream, value:PT_Int):Void {
         write__TYPE_UINT32(output, ZigZag.encode32(value));
     }
     public static function write__TYPE_SINT64(output:PT_OutputStream, value:PT_Int64):Void {
         writeVarint64(output,
-                ZigZag.encode64low(Utils.getLow(value), Utils.getHigh(value)),
-                ZigZag.encode64high(Utils.getLow(value), Utils.getHigh(value)));
+                ZigZag.encode64low(Protohx.getLow(value), Protohx.getHigh(value)),
+                ZigZag.encode64high(Protohx.getLow(value), Protohx.getHigh(value)));
     }
     public static function write__TYPE_MESSAGE(output:PT_OutputStream, value:Message):Void {
         var i:PT_UInt = output.beginBlock();

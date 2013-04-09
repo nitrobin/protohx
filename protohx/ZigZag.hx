@@ -11,7 +11,7 @@ package protohx;
 /**
  * @private
  */
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 
 class ZigZag {
     public static function encode32(n:PT_Int):PT_Int {

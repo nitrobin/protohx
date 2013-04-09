@@ -19,21 +19,17 @@ class MessageUtils {
         } else if (Std.is(value, Bytes)) {
             return cast(value, Bytes).toHex();
 #if java
-        } else if (  java untyped __java__('value instanceof java.lang.Long')) {
+        } else if (untyped __java__('value instanceof java.lang.Long')) {
 #else
         } else if (Std.is(value, Int64)) {
 #end
             return cast(value, Int64).toStr();
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};
-            for (f in Reflect.fields(value)) {
-                if (!f.startsWith("hasField__")) {
-                    var v = Reflect.field(value, f);
-                    if(v != null || keepNulls){
-                        Reflect.setField(m, f, toObject(v, keepNulls));
-                    }
-                }
-            }
+            var msg = cast(value, protohx.Message);
+            msg.forEachFields(function (f, v) {
+                Reflect.setField(m, f, toObject(v, keepNulls));
+            });
             return m;
         } else if (Std.is(value, Array)) {
             var a:Array<Dynamic> = [];

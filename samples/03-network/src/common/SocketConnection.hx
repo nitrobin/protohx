@@ -192,6 +192,9 @@ class SocketConnection {
             self.socket.on('disconnect', function (msg) {
                 onClose();
                 self.socket.disconnect();
+                onConnect = function(){}
+                onClose = function(){}
+                addBytes = function(b){}
             });
         });
         ");

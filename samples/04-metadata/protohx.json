@@ -1,0 +1,11 @@
+{
+    "protoPath": "proto",
+    "protoFiles": [
+        "proto/test.proto",
+        "proto/google/protobuf/compiler/plugin.proto",
+        "proto/google/protobuf/descriptor.proto"
+    ],
+    "cleanOut": true,
+    "haxeOut": "out/src-gen",
+    "javaOut": null
+}

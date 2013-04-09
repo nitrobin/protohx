@@ -8,7 +8,7 @@
 // as listed at <url: http://www.opensource.org/licenses/bsd-license.php >.
 
 package protohx;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 class WireType {
     public static inline var VARINT:PT_UInt = 0;
     public static inline var FIXED_64_BIT:PT_UInt = 1;

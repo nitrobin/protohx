@@ -1,0 +1,17 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/php
+
+--next
+
+-main HaxeMain
+-cp src
+-cp out/src-gen-hx
+-D haxe3
+-lib protohx
+
+-php out/php
+
+--next
+
+-cmd php out/php/index.php

@@ -1,7 +1,25 @@
 package samples;
 
+enum ClientType {
+    CT_UNKNOWN = 0;
+    CT_HUMAN = 1;
+    CT_BOT   = 2;
+}
+enum ClientPlatform {
+    CP_UNKNOWN = 0;
+    CP_LINUX   = 1;
+    CP_FLASH   = 2;
+    CP_ANDROID = 3;
+    CP_HTML5   = 4;
+    CP_NODEJS  = 5;
+    CP_WINDOWS = 6;
+    CP_IOS = 7;
+}
+
 message LoginReq {
-    optional string nick = 1;
+    optional string status = 1;
+    optional ClientType clientType = 2 [default = CT_UNKNOWN];
+    optional ClientPlatform clientPlatform = 3 [default = CP_UNKNOWN];
 }
 
 message LoginRes {
@@ -14,6 +32,8 @@ message PlayerData {
     optional int32 x       = 3;
     optional int32 y       = 4;
     optional string status = 5;
+    optional ClientType clientType = 6 [default = CT_UNKNOWN];
+    optional ClientPlatform clientPlatform = 7 [default = CP_UNKNOWN];
 }
 
 message RemovePlayerRes {

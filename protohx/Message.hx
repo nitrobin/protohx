@@ -14,7 +14,7 @@ package protohx;
 import haxe.ds.IntMap;
 import haxe.io.Output;
 import haxe.io.Bytes;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 
 class Message {
     private var otherFields:IntMap<Dynamic>;
@@ -201,10 +201,10 @@ class Message {
         return null;
     }
     public function defaultInt64():PT_Int64 {
-        return Utils.newInt64(0, 0);
+        return Protohx.newInt64(0, 0);
     }
     public function defaultUInt64():PT_UInt64 {
-        return Utils.newUInt64(0, 0);
+        return Protohx.newUInt64(0, 0);
     }
 
     public static function stringToByteArray(s:String):PT_Bytes {
@@ -218,4 +218,6 @@ class Message {
             }
         }
     }
+
+    public function forEachFields(fn:String->Dynamic->Void):Void{}
 }

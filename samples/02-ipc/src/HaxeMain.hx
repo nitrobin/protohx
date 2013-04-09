@@ -1,5 +1,5 @@
 package;
-import protohx.ProtocolTypes.Utils;
+import protohx.Protohx;
 import calc.OpCode;
 import calc.ValueMessage;
 import calc.OutputMessage;
@@ -39,16 +39,16 @@ class TestBasics extends haxe.unit.TestCase {
         runCalc([v(0xffffffff), v(0x02)], [OpCode.ADD], v(0x01)) ;
     }
 
+    public function v(h:Int, l:Int):ValueMessage {
+        var vm = new ValueMessage();
+        vm.si64 = Protohx.newInt64(h, l);
+        vm.sfi64 = Protohx.newInt64(h, l);
+        vm.i64 = Protohx.newInt64(h, l);
+        vm.fi64 = Protohx.newInt64(h, l);
+        vm.ui64 = Protohx.newUInt64(h, l);
+        return vm;
+    }
     public function testPlugin64() {
-        function v(h:Int, l:Int) {
-            var vm = new ValueMessage();
-            vm.si64 = Utils.newInt64(h, l);
-            vm.sfi64 = Utils.newInt64(h, l);
-            vm.i64 = Utils.newInt64(h, l);
-            vm.fi64 = Utils.newInt64(h, l);
-            vm.ui64 = Utils.newUInt64(h, l);
-            return vm;
-        }
         runCalc([v(0, 1), v(0, 1)], [ OpCode.MUL], v(0, 1)) ;
         runCalc([v(0, 1), v(0, 2), v(0, 3)], [OpCode.ADD, OpCode.MUL], v(0, 7)) ;
         runCalc([v(0, 0xffffffff), v(0, 1), v(0, 1)], [OpCode.ADD, OpCode.MUL], v(1, 0)) ;
@@ -82,35 +82,36 @@ class TestBasics extends haxe.unit.TestCase {
         om.mergeFrom(resBytes);
 
         p.close();
-        trace(protohx.MessageUtils.toJson(om));
+//        trace(protohx.MessageUtils.toJson(im));
+//        trace(protohx.MessageUtils.toJson(om));
 
         assertTrue(om.success);
 //        assertEquals("ok", om.msg);
-        var ir = om.value;
+        var ir:ValueMessage = om.value;
         if (r.hasI32()) {assertEquals(r.i32, ir.i32); }
         if (r.hasUi32()) {assertEquals(r.ui32, ir.ui32); }
         if (r.hasSi32()) {assertEquals(r.si32, ir.si32); }
         if (r.hasF()) {assertEquals(r.f, ir.f);}
         if (r.hasD()) {assertEquals(r.d, ir.d);}
         if (r.hasI64()) {
-            assertEquals(r.i64.getLow(), ir.i64.getLow());
-            assertEquals(r.i64.getHigh(), ir.i64.getHigh());
+            assertEquals(Protohx.getLow(r.i64), Protohx.getLow(ir.i64));
+            assertEquals(Protohx.getHigh(r.i64), Protohx.getHigh(ir.i64));
         }
         if (r.hasFi64()) {
-            assertEquals(r.fi64.getLow(), ir.fi64.getLow());
-            assertEquals(r.fi64.getHigh(), ir.fi64.getHigh());
+            assertEquals(Protohx.getLow(r.fi64), Protohx.getLow(ir.fi64));
+            assertEquals(Protohx.getHigh(r.fi64), Protohx.getHigh(ir.fi64));
         }
         if (r.hasUi64()) {
-            assertEquals(r.ui64.getLow(), ir.ui64.getLow());
-            assertEquals(r.ui64.getHigh(), ir.ui64.getHigh());
+            assertEquals(Protohx.getLow(r.ui64), Protohx.getLow(ir.ui64));
+            assertEquals(Protohx.getHigh(r.ui64), Protohx.getHigh(ir.ui64));
         }
         if (r.hasSfi64()) {
-            assertEquals(r.sfi64.getLow(), ir.sfi64.getLow());
-            assertEquals(r.sfi64.getHigh(), ir.sfi64.getHigh());
+            assertEquals(Protohx.getLow(r.sfi64), Protohx.getLow(ir.sfi64));
+            assertEquals(Protohx.getHigh(r.sfi64), Protohx.getHigh(ir.sfi64));
         }
         if (r.hasSi64()) {
-            assertEquals(r.si64.getLow(), ir.si64.getLow());
-            assertEquals(r.si64.getHigh(), ir.si64.getHigh());
+            assertEquals(Protohx.getLow(r.si64), Protohx.getLow(ir.si64));
+            assertEquals(Protohx.getHigh(r.si64), Protohx.getHigh(ir.si64));
         }
     }
 }

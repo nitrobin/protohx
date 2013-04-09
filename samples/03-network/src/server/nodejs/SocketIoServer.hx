@@ -1,5 +1,6 @@
 package server.nodejs;
 #if js
+import common.Config;
 import server.logic.BakedMsg;
 import server.logic.SessionRegistry;
 import server.logic.Session;
@@ -47,48 +48,49 @@ class SocketIoServer {
 
     public static function main() {
         var sr:SessionRegistry = new SessionRegistry();
-        //MainServer.tcpTest(sr);
-        tcpTest(sr);
+//        MainServer.runSocketServer(sr, Config.DEAFULT_TCP_PORT);
+//        runSocketIoServer(sr, Config.DEAFULT_HTTP_PORT);
+        var port = untyped  (__js__("process.env.VMC_APP_PORT ") || Config.DEAFULT_HTTP_PORT);
+        runSocketIoServer(sr, port);
     }
 
-    public static function tcpTest(sr:SessionRegistry) {
+    public static function runSocketIoServer(sr:SessionRegistry, port:Int) {
+        var policyXml = '<cross-domain-policy><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>';
         var newSocketIoSession = function (s:Dynamic) {
         return new SocketIoSession(s);
         }
         var unserialize = haxe.Unserializer.run;
+        var statistics = sr.getStatisticsStr;
         untyped __js__("
-        var app = require('http').createServer(handler)
-        , io = require('socket.io').listen(app)
+        var http = require('http')
+        , socket_io = require('socket.io')
         , fs = require('fs')
         , console = require('console')
+        , express = require('express')
 
-        app.listen(process.env.VMC_APP_PORT || 5001);
+        var app = express();
+        var httpServer = http.createServer(app)
+        httpServer.listen(port);
+        console.log('socket.io server on '+port+' port ')
+        var io = socket_io.listen(httpServer);
 
         io.configure('development', function(){
             io.set('transports', ['xhr-polling']);
         });
 
-        function handler (req, res) {
-            console.log(req.url);
-            var fn = __dirname + '/index.html';
-            if(req.url.indexOf('protohx-samples-network-client.js')!=-1){
-                fn = __dirname + '/protohx-samples-network-client.js';
-            }
-            fs.readFile(fn,
-            function (err, data) {
-                if (err) {
-                    res.writeHead(500);
-                    return res.end('Error loading index.html');
-                }
-
-                res.writeHead(200);
-                res.end(data);
-            });
-        }
+        app.get('/stat', function(req, res){
+        res.setHeader('Content-Type', 'text/json');
+            res.send(statistics());
+        });
+        app.get('/crossdomain.xml', function(req, res){
+            res.setHeader('Content-Type', 'text/xml');
+            res.setHeader('Content-Length', policyXml.length);
+            res.end(policyXml);
+        });
+        app.use(express.static(__dirname + '/static'));
 
         io.sockets.on('connection', function (socket) {
             var session = newSocketIoSession(socket);
-//            socket.set('session', session);
             sr.sessionConnect(session);
             socket.on('message', function (data) {
                 console.log(data);

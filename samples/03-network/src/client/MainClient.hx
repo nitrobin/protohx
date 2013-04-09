@@ -1,6 +1,7 @@
 package client;
 
-#if (flash || nme)
+import samples.ClientType;
+import samples.ClientPlatform;
 import haxe.remoting.SocketConnection;
 import flash.text.TextFieldType;
 import samples.PlayerData;
@@ -8,11 +9,12 @@ import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
 
+import common.Config;
 import common.MsgQueue;
 import common.SocketConnection;
 
 import protohx.Message;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 
 import haxe.ds.IntMap;
 import haxe.io.Bytes;
@@ -27,16 +29,19 @@ import com.eclecticdesignstudio.motion.easing.Quad;
 
 class PlayerNode extends flash.display.Sprite {
     public var player:PlayerData;
-    var tf:TextField;
+    private var tf:TextField;
+    private var me:Bool;
+    private var bot:Bool;
 
-    public function new(player:PlayerData) {
+    public function new(player:PlayerData, myId:Int) {
         super();
         this.player = player;
-        var nick = player.nick;
-        var bot:Bool = ((nick != null) && nick.indexOf("bot") == 0);
+//        trace(protohx.MessageUtils.toJson(player));
+        me = (player.id == myId);
+        bot = (player.clientType == ClientType.CT_BOT);
 
         graphics.clear();
-        graphics.lineStyle(1, 0x000000);
+        graphics.lineStyle(me ? 3 : 1, me ? 0xff0000 : 0x000000);
         graphics.beginFill(bot ? 0x880000 : 0x00ff00);
 //        graphics.drawCircle(0, 0, 20);
         graphics.drawRect(-15, -15, 40, 40);
@@ -51,7 +56,7 @@ class PlayerNode extends flash.display.Sprite {
     }
 
     public function rebuild(animate:Bool) {
-        tf.text = player.nick;
+        tf.text = '${player.nick} \n[${Config.getPlatformName(player.clientPlatform)}]';
         if (animate) {
             var duration:Float = 1.0;
             var targetX:Float = player.x;
@@ -68,42 +73,71 @@ class PlayerNode extends flash.display.Sprite {
 }
 
 
+class SimpleBtn extends flash.display.Sprite {
+    public var btn:TextField;
+
+    public function new(label:String) {
+        super();
+
+        btn = new TextField();
+        btn.defaultTextFormat.size = 24;
+        btn.text = ""+label;
+        btn.border = true;
+        btn.borderColor = 0xff0000;
+        btn.backgroundColor = 0x00ff00;
+        btn.background = true;
+        btn.selectable = false;
+        btn.height = 28;
+        btn.width = 100;
+        btn.x = 0;
+        btn.y = 0;
+        addChild(btn);
+        graphics.clear();
+        graphics.beginFill(0x00ff00);
+        graphics.drawRect(0, 0, 100, 28);
+        graphics.endFill();
+
+    }
+}
+
 class AddressSprite extends flash.display.Sprite {
     public var hostTF:TextField;
     public var portTF:TextField;
-    public var btn:TextField;
+    public var btn:Sprite;
 
     public function new(host:String, port:Int) {
         super();
         hostTF = new TextField();
+        #if !android // nme 4 bug workaround
         hostTF.type = TextFieldType.INPUT;
+        #end
         hostTF.defaultTextFormat.size = 24;
         hostTF.text = host;
         hostTF.border = true;
         hostTF.borderColor = 0x000000;
         hostTF.height = 28;
+        hostTF.width = 100;
+        hostTF.x = 0;
+        hostTF.y = 0;
         addChild(hostTF);
 
         portTF = new TextField();
+        #if !android // nme 4 bug workaround
         portTF.type = TextFieldType.INPUT;
-        hostTF.defaultTextFormat.size = 24;
+        #end
+        portTF.defaultTextFormat.size = 24;
         portTF.text = Std.string(port);
         portTF.border = true;
         portTF.borderColor = 0x000000;
-        portTF.y = 30;
         portTF.height = 28;
+        portTF.width = 100;
+        portTF.x = 0;
+        portTF.y = 30;
         addChild(portTF);
 
-        btn = new TextField();
-        hostTF.defaultTextFormat.size = 24;
-        btn.text = "connect "+host+":" + port;
-        btn.border = true;
-        btn.borderColor = 0xff0000;
-        btn.backgroundColor = 0x00ff00;
-        btn.background = true;
+        btn = new SimpleBtn("connect");
+        btn.x = 0;
         btn.y = 60;
-        btn.selectable = false;
-        btn.height = 28;
         addChild(btn);
     }
 }
@@ -121,38 +155,33 @@ class MainClient extends flash.display.Sprite {
 
     public function new() {
         super();
-        var port = 5000;
-        #if js
-        port = 5001;
-        #end
         graphics.clear();
         graphics.beginFill(0x888888);
         graphics.drawRect(0, 0, 400, 400);
         graphics.endFill();
         welcome = new Sprite();
 
-        var address = new AddressSprite("127.0.0.1", port);
+        #if js
+        var btn = new SimpleBtn("connect");
+        btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
+            connect("", 0);
+        });
+        welcome.addChild(btn);
+        #else
+        var address = new AddressSprite(Config.DEAFULT_HOST, Config.DEAFULT_TCP_PORT);
         address.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
             var host = address.hostTF.text;
             var port = Std.parseInt(address.portTF.text);
             connect(host, port);
         });
         welcome.addChild(address);
-        var address2 = new AddressSprite("192.168.0.88", port);
-	address.y = 100;
-        address2.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
-            var host = address2.hostTF.text;
-            var port = Std.parseInt(address2.portTF.text);
-            connect(host, port);
-        });
-        welcome.addChild(address2);
+        #end
 
         start();
-
     }
 
     private function start():Void {
-	addChild(welcome);
+        addChild(welcome);
     }
 
     private function connect(host, port):Void {
@@ -189,7 +218,9 @@ class MainClient extends flash.display.Sprite {
         var msg = new ProtocolMessage();
         msg.type = MsgType.LOGIN_REQ;
         msg.loginReq = new LoginReq();
-        msg.loginReq.nick = "uf" + Math.floor(Math.random() * 50);
+        msg.loginReq.status = "ok";
+        msg.loginReq.clientType = ClientType.CT_HUMAN;
+        msg.loginReq.clientPlatform = Config.getPlatform();
         s.writeMsg(msg);
         graphics.clear();
         graphics.beginFill(0x88ff88);
@@ -197,12 +228,16 @@ class MainClient extends flash.display.Sprite {
         graphics.endFill();
     }
 
+    private var myId:Int;
+
     private function addBytes(bytes:Bytes):Void {
         msgQueue.addBytes(bytes);
         while (msgQueue.hasMsg()) {
             var msg:ProtocolMessage = msgQueue.popMsg();
 //                trace('CLIENT MSG: ' + haxe.Json.stringify(msg));
-            if (msg.type == MsgType.REMOVE_PLAYER_RES) {
+            if (msg.type == MsgType.LOGIN_RES) {
+                myId = msg.loginRes.id;
+            } else if (msg.type == MsgType.REMOVE_PLAYER_RES) {
                 var node = players.get(msg.removePlayerRes.id);
                 if (node != null) {
                     players.remove(msg.removePlayerRes.id) ;
@@ -210,7 +245,7 @@ class MainClient extends flash.display.Sprite {
                 }
             } else if (msg.type == MsgType.ADD_PLAYER_RES) {
                 var p = msg.addPlayerRes;
-                var node = new PlayerNode(p);
+                var node = new PlayerNode(p, myId);
                 players.set(p.id, node);
                 addChild(node);
             } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
@@ -228,4 +263,3 @@ class MainClient extends flash.display.Sprite {
         }
     }
 }
-#end

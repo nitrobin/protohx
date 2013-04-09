@@ -5,4 +5,5 @@ config.json
 samples/01-core/out
 samples/02-ipc/out
 samples/03-network/out
+samples/04-metadata/out
 *.iml

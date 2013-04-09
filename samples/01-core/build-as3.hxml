@@ -1,0 +1,22 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/as3
+
+--next
+
+-resource assets/plugin_proto_input@plugin_proto_input
+-main Main
+-cp src
+-cp out/src-gen
+-D haxe3
+-lib protohx
+
+-as3 out/as3
+
+--next
+
+-cmd cd out/as3
+-cmd mxmlc -output as3.swf __main__.as  -static-link-runtime-shared-libraries=true -debug
+#-swf-header 800:600:40:FFFFFF
+
+-cmd flashplayerdebugger as3.swf

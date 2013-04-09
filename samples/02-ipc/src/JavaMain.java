@@ -41,14 +41,14 @@ public class JavaMain {
             builder.setSuccess(true);
             builder.setValue(acc);
 
-            builder.setMsg("ok");
+//            builder.setMsg("ok");
 
-//            builder.setMsg("ok: " +
-//                    (acc.hasFi64() ? acc.getFi64() : "null") + ":" +
-//                    (acc.hasSfi64() ? acc.getSfi64() : "null") + ":" +
-//                    (acc.hasUi64() ? acc.getUi64() : "null") + ":" +
-//                    (acc.hasSi64() ? acc.getSi64() : "null") + ":" +
-//                    (acc.hasI64() ? acc.getI64() : "null"));
+            builder.setMsg("ok: " +
+                    (acc.hasFi64() ? acc.getFi64() : "null") + ":" +
+                    (acc.hasSfi64() ? acc.getSfi64() : "null") + ":" +
+                    (acc.hasUi64() ? acc.getUi64() : "null") + ":" +
+                    (acc.hasSi64() ? acc.getSi64() : "null") + ":" +
+                    (acc.hasI64() ? acc.getI64() : "null"));
 
             return builder.build();
         } catch (Throwable e) {
