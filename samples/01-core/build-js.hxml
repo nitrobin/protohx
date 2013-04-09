@@ -15,4 +15,5 @@
 
 --next
 
--cmd phantomjs out/Main.js
+#-cmd phantomjs out/Main.js
+-cmd node out/Main.js

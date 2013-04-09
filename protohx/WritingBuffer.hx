@@ -12,7 +12,7 @@ package protohx;
 import haxe.io.Output;
 import haxe.io.Bytes;
 import haxe.Utf8;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 import haxe.io.BytesOutput;
 
 class WritingBuffer {
@@ -23,7 +23,7 @@ class WritingBuffer {
     public function new() {
         slices = new Array<PT_UInt>();
         buf = new BytesOutput();
-        Utils.setOutputEndian(buf);
+        Protohx.setOutputEndian(buf);
         position = 0;
     }
 

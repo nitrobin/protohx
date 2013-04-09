@@ -1,12 +1,13 @@
-package nodejs;
+package server.nodejs;
 #if js
-import logic.BakedMsg;
-import logic.SessionRegistry;
-import logic.Session;
+import common.Config;
+import server.logic.BakedMsg;
+import server.logic.SessionRegistry;
+import server.logic.Session;
 import haxe.io.Bytes;
 import js.Node;
-import nodejs.NodeUtils;
-using nodejs.NodeUtils;
+import  server.nodejs.NodeUtils;
+using  server.nodejs.NodeUtils;
 
 class NodeSession extends Session {
 
@@ -22,14 +23,16 @@ class NodeSession extends Session {
     }
 
     public override function bakeMsg(msg:protohx.Message):BakedMsg {
-        return new BakedMsg(msg, msg.toFrame());
+        return new BakedMsg(msg, null);
     }
 
     public override function writeMsgBaked(msg:BakedMsg):Void {
-        socket.writeSafe(msg.data);
+        trace("OUT: "+protohx.MessageUtils.toJson(msg.msg));
+        socket.writeSafe(msg.msg.toFrame());
     }
 
     public override function writeMsg(msg:protohx.Message):Void {
+        trace("OUT: "+protohx.MessageUtils.toJson(msg));
         socket.writeMsgSafe(msg);
     }
 }
@@ -40,24 +43,25 @@ class MainServer {
     private static var console:NodeConsole = Node.console;
 
     public static function main() {
-        flashCrossDomain();
-        tcpTest();
+        var sr:SessionRegistry = new SessionRegistry();
+        flashCrossDomain(843);
+//        flashCrossDomain(Config.ADDITIONAL_POLICY_PORT);
+        runSocketServer(sr, Config.DEAFULT_TCP_PORT);
         haxe.Timer.delay(function(){
-            for(i in 0...10){
-                MainBot.tcpClientTest();
+            for(i in 0...20){
+                MainBot.tcpClientTest("127.0.0.1", Config.DEAFULT_TCP_PORT);
             }
         }, 1000);
     }
 
-    public static function tcpTest() {
-        var sr:SessionRegistry = new SessionRegistry();
+    public static function runSocketServer(sr:SessionRegistry, port:Int) {
         var server:NodeNetServer = net.createServer({allowHalfOpen:true}, function(client:NodeNetSocket) {
-            client.on(NodeC.EVENT_STREAM_CONNECT, function() {
+//            client.on(NodeC.EVENT_STREAM_CONNECT, function() {
                 var session = new NodeSession(client);
                 client.setSession(session);
                 sr.sessionConnect(session);
                 console.log('server got client connection: ${client.getAP()}');
-            });
+//            });
 //            client.on(NodeC.EVENT_STREAM_DRAIN, function() {
 //                console.log('client drain: ${client.getAP()}');
 //            });
@@ -81,13 +85,13 @@ class MainServer {
         server.on(NodeC.EVENT_STREAM_ERROR, function(e) {
             console.log('server got server error: ${e}');
         });
-        server.listen(5000, /* "localhost", */ function() {
+        server.listen(port, /* "localhost", */ function() {
             console.log('server bound: ${server.serverAddressPort()}');
         });
         console.log('simple server started');
     }
 
-    public static function flashCrossDomain() {
+    public static function flashCrossDomain(port:Int) {
         var xml = '<?xml version="1.0"?><cross-domain-policy><allow-access-from domain="*" to-ports="*"/></cross-domain-policy>';
         var len = NodeBuffer.byteLength(xml);
         var b = new NodeBuffer(len + 1);
@@ -111,7 +115,7 @@ class MainServer {
             console.log('server error: ${e}');
         });
 
-        server.listen(843, function() {
+        server.listen(port, function() {
             console.log('flashCrossDomain server bound: ${server.serverAddressPort()}');
         });
     }

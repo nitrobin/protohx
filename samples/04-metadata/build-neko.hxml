@@ -4,17 +4,13 @@
 
 --next
 
--main client.MainClient
+-main Main
 -cp src
 -cp out/src-gen
 -D haxe3
+-neko out/run.n
 -lib protohx
--lib actuate
-
-
--swf out/run.swf
--swf-header 320:320:40:FFFFFF
 
 --next
 
--cmd flashplayerdebugger out/run.swf
+-cmd neko out/run.n

@@ -1,5 +1,5 @@
 package protohx;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 
@@ -13,7 +13,7 @@ class ReadingBuffer {
         this.length = bytes.length;
         this.bytesAvailable = length;
         this.buf = new BytesInput(bytes);
-        Utils.setInputEndian(this.buf);
+        Protohx.setInputEndian(this.buf);
     }
 
     public function readBytes(len:Int):Bytes {

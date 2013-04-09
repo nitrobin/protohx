@@ -1,14 +1,16 @@
 <project name="protohx" url="https://github.com/nitrobin/protohx" license="BSD">
     <user name="nitrobin"/>
     <tag v="protobuf"/>
+    <tag v="serialization"/>
     <tag v="cross"/>
     <tag v="neko"/>
     <tag v="flash"/>
     <tag v="js"/>
     <tag v="cpp"/>
     <tag v="java"/>
-    <description>Сross-platform haxe implementation of "Google Protocol Buffers".  
+    <tag v="php"/>
+    <description>Сrossplatform implementation of "Google's Protocol Buffers" for haxe3.
 	https://code.google.com/p/protobuf/	
 </description>
-    <version name="0.1">First release, basic features is working correctly</version>
+    <version name="0.3">Refactoring. More samples and tests.</version>
 </project>

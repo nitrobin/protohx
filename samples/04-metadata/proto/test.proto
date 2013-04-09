@@ -42,7 +42,9 @@ message ComplexMessage {
     required MsgType typeOpt  = 10;
 
     optional string msgOpt    = 11;
-     repeated sint32  rnds      = 12;
+    repeated sint32  rnds     = 12;
+    repeated sint32  rnds2    = 13 [packed=true];
+    required int64  i64      = 14 [default = 0xffffffff];
 }
 
 

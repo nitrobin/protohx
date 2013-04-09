@@ -1,0 +1,18 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/java
+
+--next
+
+-main HaxeMain
+-cp src
+-cp out/src-gen-hx
+-D haxe3
+-lib protohx
+-debug
+
+-java out/java
+
+--next
+
+-cmd java -jar out/java/java.jar

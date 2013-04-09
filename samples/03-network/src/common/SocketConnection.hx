@@ -1,4 +1,4 @@
-package net;
+package common;
 
 import haxe.io.BytesData;
 import haxe.io.BytesOutput;
@@ -142,4 +142,63 @@ class SocketConnection {
         socket.output.writeBytes(bytes, 0, bytes.length);
     }
 }
+#elseif js
+//    var socket = io.connect('http://localhost');
+//    socket.on('news', function (data) {
+//        console.log(data);
+//        socket.emit('my other event', { my: 'data' });
+//    });
+class SocketConnection {
+    var socket:Dynamic;
+
+    public dynamic function onConnect():Void {}
+    public dynamic function onClose():Void {}
+    public dynamic function addBytes(bytes:Bytes):Void {}
+
+    public function new() {
+
+    }
+
+    public function handleMsg(msg:String):Void {
+    }
+    public function writeMsg(msg:protohx.Message):Void {
+        socket.emit("message", haxe.Serializer.run(msgToFrameBytes(msg)));
+    }
+
+    public static function msgToFrameBytes(msg:protohx.Message):haxe.io.Bytes {
+        var b = new BytesOutput();
+        msg.writeTo(b);
+        var data = b.getBytes();
+
+        var res = new BytesOutput();
+        res.writeInt32(data.length);
+        res.write(data);
+        return res.getBytes();
+    }
+
+    public function connect(host, port, onConnect, addBytes, onClose) {
+        this.onConnect = onConnect;
+        this.addBytes = addBytes;
+        this.onClose = onClose;
+        var self = this;
+        untyped __js__("
+        //self.socket = io.connect('http://'+host+':'+port);
+        self.socket = io.connect();
+        this.socket.on('connect', function () {
+            onConnect();
+            self.socket.on('message', function (msg) {
+                addBytes(haxe.Unserializer.run(msg));
+            });
+            self.socket.on('disconnect', function (msg) {
+                onClose();
+                self.socket.disconnect();
+                onConnect = function(){}
+                onClose = function(){}
+                addBytes = function(b){}
+            });
+        });
+        ");
+    }
+}
+
 #end

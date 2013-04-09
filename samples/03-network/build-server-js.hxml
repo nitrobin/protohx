@@ -4,17 +4,16 @@
 
 --next
 
--main nodejs.MainServer
+-main server.nodejs.MainServer
 -cp src
--cp src-server
 -cp out/src-gen
 -D haxe3
 -lib protohx
 -lib nodejs
 
 
--js out/MainServer.js
+-js out/socket-server.js
 
 --next
 
--cmd node out/MainServer.js
+-cmd node out/socket-server.js

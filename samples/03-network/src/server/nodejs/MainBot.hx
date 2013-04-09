@@ -1,38 +1,43 @@
-package nodejs;
+package server.nodejs;
 #if js
+import common.Config;
 import haxe.Timer;
 import samples.PlayerData;
+import samples.ClientType;
+import samples.ClientPlatform;
 import samples.LoginReq;
 import samples.ProtocolMessage;
 import samples.protocolmessage.MsgType;
-import net.MsgQueue;
-import logic.SessionRegistry;
-import logic.Session;
+import common.MsgQueue;
+import server.logic.SessionRegistry;
+import server.logic.Session;
 import haxe.io.Bytes;
 import js.Node;
-import nodejs.NodeUtils;
-using nodejs.NodeUtils;
+import server.nodejs.NodeUtils;
+using  server.nodejs.NodeUtils;
 
 class MainBot {
     private static var net:NodeNet = Node.net;
     private static var console:NodeConsole = Node.console;
 
     public static function main() {
-        tcpClientTest();
+        tcpClientTest("127.0.0.1", Config.DEAFULT_TCP_PORT);
     }
 
-    public static function tcpClientTest() {
+    public static function tcpClientTest(host:String, port:Int) {
         var msgQueue:MsgQueue = new MsgQueue();
-        var client:NodeNetSocket = net.connect(5000, "127.0.0.1");
+        var client:NodeNetSocket = net.connect(port, host);
         var id:Int = 0;
         var player:PlayerData = null;
         var timer:Timer = null;
         client.on(NodeC.EVENT_STREAM_CONNECT, function() {
-            console.log('client connected to: ${client.getAP()}');
+            console.log('client connected to: ${client.addressPort()}');
             var msg = new ProtocolMessage();
             msg.type = MsgType.LOGIN_REQ;
             msg.loginReq = new LoginReq();
-            msg.loginReq.nick = "bot" + Math.floor(Math.random() * 100);
+            msg.loginReq.status = "ok";
+            msg.loginReq.clientType = ClientType.CT_BOT;
+            msg.loginReq.clientPlatform = ClientPlatform.CP_NODEJS;
             client.writeMsgSafe(msg);
 //            client.end();
 //            haxe.Timer.delay(function() {

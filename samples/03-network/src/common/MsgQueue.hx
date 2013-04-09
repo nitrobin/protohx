@@ -1,4 +1,4 @@
-package net;
+package common;
 import samples.ProtocolMessage;
 import haxe.io.BytesInput;
 import haxe.io.BytesBuffer;
@@ -25,6 +25,9 @@ class MsgQueue {
     }
 
     public function addBytes(bytes:Bytes) {
+        if(bytes == null){
+            return;
+        }
         if (bytesBuff == null) {
             bytesBuff = bytes;
         } else {

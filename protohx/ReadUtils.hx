@@ -10,7 +10,7 @@
 
 package protohx;
 
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 import haxe.Int64;
 using haxe.Int64;
 
@@ -54,7 +54,7 @@ class ReadUtils {
                     low |= ((b & 0x7f) << i);
                 } else {
                     low |= (b << i);
-                    return Utils.newInt64(low, high);
+                    return Protohx.newInt64(high, low);
                 }
             }
             i += 7;
@@ -66,7 +66,7 @@ class ReadUtils {
         } else {
             low |= (b << i);
             high = b >>> 4;
-            return Utils.newInt64(low, high);
+            return Protohx.newInt64(high, low);
         }
         i = 3;
         while ( true ) {
@@ -81,11 +81,11 @@ class ReadUtils {
             }
             i += 7;
         }
-        return Utils.newInt64(low, high);
+        return Protohx.newInt64(high, low);
     }
     public static function read__TYPE_UINT64(input:PT_InputStream):PT_UInt64 {
         var tmp = read__TYPE_INT64(input);
-        return Utils.newUInt64(Utils.getLow(tmp), Utils.getHigh(tmp));
+        return Protohx.newUInt64(Protohx.getHigh(tmp), Protohx.getLow(tmp));
     }
     public static function read__TYPE_INT32(input:PT_InputStream):PT_Int {
         return cast read__TYPE_UINT32(input) ;
@@ -93,7 +93,7 @@ class ReadUtils {
     public static function read__TYPE_FIXED64(input:PT_InputStream):PT_UInt64 {
         var low = input.readInt();
         var high = input.readInt();
-        return Utils.newUInt64(low, high);
+        return Protohx.newUInt64(high, low);
     }
     public static function read__TYPE_FIXED32(input:PT_InputStream):PT_Int {
         return input.readInt();
@@ -142,18 +142,18 @@ class ReadUtils {
     public static function read__TYPE_SFIXED64(input:PT_InputStream):PT_Int64 {
         var low = input.readInt();
         var high = input.readInt();
-        return Utils.newInt64(low, high);
+        return Protohx.newInt64(high, low);
     }
     public static function read__TYPE_SINT32(input:PT_InputStream):PT_Int {
         return ZigZag.decode32(read__TYPE_UINT32(input));
     }
     public static function read__TYPE_SINT64(input:PT_InputStream):PT_Int64 {
         var result:PT_Int64 = read__TYPE_INT64(input);
-        var low:PT_Int = Utils.getLow(result);
-        var high:PT_Int = Utils.getHigh(result);
+        var low:PT_Int = Protohx.getLow(result);
+        var high:PT_Int = Protohx.getHigh(result);
         var lowNew = ZigZag.decode64low(low, high);
         var highNew = ZigZag.decode64high(low, high);
-        return Utils.newInt64(lowNew, highNew);
+        return Protohx.newInt64(highNew, lowNew);
     }
     //TODO check types
     public static function read__TYPE_MESSAGE(input:PT_InputStream, message:Message):Message {

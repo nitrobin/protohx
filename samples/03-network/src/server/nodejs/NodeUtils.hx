@@ -1,6 +1,6 @@
-package nodejs;
+package server.nodejs;
 #if js
-import logic.Session;
+import  server.logic.Session;
 import haxe.io.BytesOutput;
 import js.Node;
 
@@ -75,6 +75,17 @@ class NodeUtils {
         var b = new BytesOutput();
         msg.writeTo(b);
         return b.getBytes();
+    }
+
+    public static function msgToFrameBytes(msg:protohx.Message):haxe.io.Bytes {
+        var b = new BytesOutput();
+        msg.writeTo(b);
+        var data = b.getBytes();
+
+        var res = new BytesOutput();
+        res.writeInt32(data.length);
+        res.write(data);
+        return res.getBytes();
     }
 
     public static function writeBytes(socket:NodeNetSocket, bytes:haxe.io.Bytes):Void {

@@ -1,11 +1,12 @@
 package ;
+import test.Foo;
 import protohx.Message;
 import haxe.io.BytesOutput;
 import google.protobuf.compiler.CodeGeneratorRequest;
 import test.IntTestMessage;
 import test.complexmessage.Point;
 import test.complexmessage.MsgType;
-import protohx.ProtocolTypes;
+import protohx.Protohx;
 import test.ComplexMessage;
 import haxe.io.Bytes;
 import haxe.Int64;
@@ -165,11 +166,9 @@ class TestInt64 extends TestBase {
     public function testInt64() {
         function forInt64(l:PT_Int, h:PT_Int = 0) {
             var obj = new IntTestMessage();
-            obj.i64 = Utils.newInt64(l, h);
+            obj.i64 = Protohx.newInt64(h, l);
             var copy = copyMsg(obj);
-#if !java
-            assertTrue(copy.i64 != null);
-#end
+            assertTrue(copy.hasI64());
             assertEquals(obj.i64.getLow(), copy.i64.getLow());
             assertEquals(obj.i64.getHigh(), copy.i64.getHigh());
         }
@@ -182,6 +181,7 @@ class TestInt64 extends TestBase {
         forInt64(0xefffffff);
         forInt64(0);
 
+        forInt64(0, 0x1);
         forInt64(0, 0xff);
         forInt64(0, 0xffff);
         forInt64(0, 0xffffff);
@@ -276,8 +276,8 @@ class TestComplex extends TestBase {
             assertEquals(c, b);
         }
 
-        obj.attach = null;
-        copy.attach = null;
+        var foo = new Foo();
+        assertEquals("1.0", foo.version);
     }
 
 }
