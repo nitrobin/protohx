@@ -19,7 +19,7 @@ class SocketIoSession extends Session {
     }
 
     public function writeMsgSafe_(bytes:Bytes):Void {
-        socket.emit("message", haxe.Serializer.run(bytes));
+        socket.emit("message", common.Base64.encodeBase64(bytes));
     }
 
     public override function close():Void {
@@ -48,9 +48,8 @@ class SocketIoServer {
 
     public static function main() {
         var sr:SessionRegistry = new SessionRegistry();
-//        MainServer.runSocketServer(sr, Config.DEAFULT_TCP_PORT);
-//        runSocketIoServer(sr, Config.DEAFULT_HTTP_PORT);
-        var port = untyped  (__js__("process.env.VMC_APP_PORT ") || Config.DEAFULT_HTTP_PORT);
+//        NetServer.runSocketServer(sr, Config.DEFAULT_TCP_PORT);
+        var port = untyped  (__js__("process.env.VMC_APP_PORT ") || Config.DEFAULT_HTTP_PORT);
         runSocketIoServer(sr, port);
     }
 
@@ -59,7 +58,7 @@ class SocketIoServer {
         var newSocketIoSession = function (s:Dynamic) {
         return new SocketIoSession(s);
         }
-        var unserialize = haxe.Unserializer.run;
+        var decodeBytes = common.Base64.decodeBase64;
         var statistics = sr.getStatisticsStr;
         untyped __js__("
         var http = require('http')
@@ -93,8 +92,7 @@ class SocketIoServer {
             var session = newSocketIoSession(socket);
             sr.sessionConnect(session);
             socket.on('message', function (data) {
-                console.log(data);
-                var bytes = unserialize(data);
+                var bytes = decodeBytes(data);
                 sr.sessionData(session, bytes);
             });
             socket.on('disconnect', function () {

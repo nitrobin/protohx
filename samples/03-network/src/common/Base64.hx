@@ -9,7 +9,8 @@ class Base64 {
 
     static function getCodec():haxe.crypto.BaseCode {
         if (codec == null) {
-            codec = new haxe.crypto.BaseCode(haxe.io.Bytes.ofString(BASE64));
+            var bytes = haxe.io.Bytes.ofString(BASE64);
+            codec = new haxe.crypto.BaseCode(bytes);
         }
         return codec;
     }
@@ -21,13 +22,14 @@ class Base64 {
             default: "";
         };
 
-        return getCodec().encodeBytes(content) + suffix;
+        var bytes = getCodec().encodeBytes(content);
+        return bytes.toString() + suffix;
     }
 
     private static function removeNullbits(s:String):String {
         var len = s.length;
-        while (s.charAt(len-1) == "=") {
-            lastChrIdx--;
+        while (len > 0 && s.charAt(len - 1) == "=") {
+            len--;
             if (len <= 0) {
                 return "";
             }
@@ -36,7 +38,8 @@ class Base64 {
     }
 
     public static function decodeBase64(content:String):haxe.io.Bytes {
-        return getCodec().decodeBytes(removeNullbits(t));
+        var bytes:haxe.io.Bytes = haxe.io.Bytes.ofString(removeNullbits(content));
+        return getCodec().decodeBytes(bytes);
     }
 
 }

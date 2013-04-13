@@ -45,6 +45,7 @@ class Protohx {
     }
 
     public static function newInt64(h:PT_Int, l:PT_Int):PT_Int64 {
+        // workaround bug https://code.google.com/p/haxe/issues/detail?id=1674
         #if java
         var hh = haxe.Int64.make(h, 0);
         var ll = haxe.Int64.make(l, 0);
@@ -55,6 +56,7 @@ class Protohx {
     }
 
     public static function newUInt64(h:PT_Int, l:PT_Int):PT_UInt64 {
+        // workaround bug https://code.google.com/p/haxe/issues/detail?id=1674
         #if java
         var hh = haxe.Int64.make(h, 0);
         var ll = haxe.Int64.make(l, 0);
