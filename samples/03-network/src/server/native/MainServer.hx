@@ -2,6 +2,7 @@ package server.native;
 
 #if neko
 
+import common.Config;
 import server.logic.SessionRegistry;
 import server.logic.Session;
 import server.logic.BakedMsg;
@@ -90,7 +91,7 @@ class MainServer extends ThreadServer<NativeSession, Bytes> {
     public static function main() {
         var server = new MainServer();
         trace("Running..");
-        server.run("0.0.0.0", 5000);
+        server.run("0.0.0.0", Config.DEFAULT_TCP_PORT);
     }
 }
 #end
