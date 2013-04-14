@@ -9,7 +9,7 @@
     <tag v="cpp"/>
     <tag v="java"/>
     <tag v="php"/>
-    <description>Сrossplatform implementation of "Google's Protocol Buffers" for haxe3.
+    <description>Crossplatform implementation of "Google's Protocol Buffers" for haxe3.
 	https://code.google.com/p/protobuf/	
 </description>
     <version name="0.3">Refactoring. More samples and tests.</version>
