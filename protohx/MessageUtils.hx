@@ -18,6 +18,7 @@ class MessageUtils {
             return value;
         } else if (Std.is(value, Bytes)) {
             return cast(value, Bytes).toHex();
+// workaround bug https://code.google.com/p/haxe/issues/detail?id=1674
 #if java
         } else if (untyped __java__('value instanceof java.lang.Long')) {
 #else

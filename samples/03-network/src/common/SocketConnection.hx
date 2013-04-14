@@ -143,11 +143,6 @@ class SocketConnection {
     }
 }
 #elseif js
-//    var socket = io.connect('http://localhost');
-//    socket.on('news', function (data) {
-//        console.log(data);
-//        socket.emit('my other event', { my: 'data' });
-//    });
 class SocketConnection {
     var socket:Dynamic;
 
@@ -162,7 +157,7 @@ class SocketConnection {
     public function handleMsg(msg:String):Void {
     }
     public function writeMsg(msg:protohx.Message):Void {
-        socket.emit("message", haxe.Serializer.run(msgToFrameBytes(msg)));
+        socket.emit("message", Base64.encodeBase64(msgToFrameBytes(msg)));
     }
 
     public static function msgToFrameBytes(msg:protohx.Message):haxe.io.Bytes {
@@ -181,13 +176,14 @@ class SocketConnection {
         this.addBytes = addBytes;
         this.onClose = onClose;
         var self = this;
+        var decodeBytes = Base64.decodeBase64;
         untyped __js__("
         //self.socket = io.connect('http://'+host+':'+port);
         self.socket = io.connect();
         this.socket.on('connect', function () {
             onConnect();
             self.socket.on('message', function (msg) {
-                addBytes(haxe.Unserializer.run(msg));
+                addBytes(decodeBytes(msg));
             });
             self.socket.on('disconnect', function (msg) {
                 onClose();

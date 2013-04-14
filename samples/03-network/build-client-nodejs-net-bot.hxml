@@ -4,7 +4,7 @@
 
 --next
 
--main server.nodejs.MainServer
+-main server.nodejs.BotClient
 -cp src
 -cp out/src-gen
 -D haxe3
@@ -12,8 +12,8 @@
 -lib nodejs
 
 
--js out/socket-server.js
+-js out/bot.js
 
 --next
 
--cmd node out/socket-server.js
+-cmd node out/bot.js

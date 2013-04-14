@@ -16,12 +16,14 @@ import js.Node;
 import server.nodejs.NodeUtils;
 using  server.nodejs.NodeUtils;
 
-class MainBot {
+class BotClient {
     private static var net:NodeNet = Node.net;
     private static var console:NodeConsole = Node.console;
 
     public static function main() {
-        tcpClientTest("127.0.0.1", Config.DEAFULT_TCP_PORT);
+        for(i in 0...20){
+            tcpClientTest(Config.DEFAULT_HOST, Config.DEFAULT_TCP_PORT);
+        }
     }
 
     public static function tcpClientTest(host:String, port:Int) {

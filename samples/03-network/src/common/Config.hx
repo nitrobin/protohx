@@ -3,9 +3,9 @@ import samples.ClientType;
 import samples.ClientPlatform;
 
 class Config {
-    public static inline var DEAFULT_HOST:String = "127.0.0.1";
-    public static inline var DEAFULT_TCP_PORT:Int = 15000;
-    public static inline var DEAFULT_HTTP_PORT:Int = 15001;
+    public static inline var DEFAULT_HOST:String = "127.0.0.1";
+    public static inline var DEFAULT_TCP_PORT:Int = 15000;
+    public static inline var DEFAULT_HTTP_PORT:Int = 15001;
     public static inline var ADDITIONAL_POLICY_PORT:Int = 15002;
 
     public static function getTypeName(code:Int):String {

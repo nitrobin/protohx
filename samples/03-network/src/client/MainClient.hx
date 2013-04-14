@@ -168,7 +168,7 @@ class MainClient extends flash.display.Sprite {
         });
         welcome.addChild(btn);
         #else
-        var address = new AddressSprite(Config.DEAFULT_HOST, Config.DEAFULT_TCP_PORT);
+        var address = new AddressSprite(Config.DEFAULT_HOST, Config.DEFAULT_TCP_PORT);
         address.btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):Void{
             var host = address.hostTF.text;
             var port = Std.parseInt(address.portTF.text);

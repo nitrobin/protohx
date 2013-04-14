@@ -37,7 +37,7 @@ class NodeSession extends Session {
     }
 }
 
-class MainServer {
+class NetServer {
 
     private static var net:NodeNet = Node.net;
     private static var console:NodeConsole = Node.console;
@@ -46,12 +46,12 @@ class MainServer {
         var sr:SessionRegistry = new SessionRegistry();
         flashCrossDomain(843);
 //        flashCrossDomain(Config.ADDITIONAL_POLICY_PORT);
-        runSocketServer(sr, Config.DEAFULT_TCP_PORT);
-        haxe.Timer.delay(function(){
-            for(i in 0...20){
-                MainBot.tcpClientTest("127.0.0.1", Config.DEAFULT_TCP_PORT);
-            }
-        }, 1000);
+        runSocketServer(sr, Config.DEFAULT_TCP_PORT);
+//        haxe.Timer.delay(function(){
+//            for(i in 0...20){
+//                BotClient.tcpClientTest(Config.DEFAULT_HOST, Config.DEFAULT_TCP_PORT);
+//            }
+//        }, 1000);
     }
 
     public static function runSocketServer(sr:SessionRegistry, port:Int) {
