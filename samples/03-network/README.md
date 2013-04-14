@@ -3,7 +3,7 @@ Crossplatform network Protohx example. :)
 
 ## Client targets
 ### Client implemented for most of NME targets:
-* html5 (via socket.io)
+* html5 (via socket.io) [live demo here](http://protohx.ap01.aws.af.cm/)
 * linux, android (sys.net.Socket)
 * flash  (flash.net.Socket)
 
