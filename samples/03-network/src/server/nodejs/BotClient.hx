@@ -22,7 +22,7 @@ class BotClient {
 
     public static function main() {
         for(i in 0...20){
-            MainBot.tcpClientTest(Config.DEFAULT_HOST, Config.DEFAULT_TCP_PORT);
+            tcpClientTest(Config.DEFAULT_HOST, Config.DEFAULT_TCP_PORT);
         }
     }
 

@@ -1,0 +1,19 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-main server.nodejs.BotClient
+-cp src
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-lib nodejs
+
+
+-js out/bot.js
+
+--next
+
+-cmd node out/bot.js

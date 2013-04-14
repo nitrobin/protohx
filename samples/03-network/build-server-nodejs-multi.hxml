@@ -1,0 +1,29 @@
+
+-cmd haxelib run protohx generate protohx.json
+
+-cmd mkdir -p out/socket-io
+-cmd haxelib run nme build html5
+
+-cmd mkdir -p out/socket-io/static
+-cmd cp index.html out/socket-io/static/
+-cmd cp package.json out/socket-io/
+-cmd cp out/html5/bin/protohx-samples-network-client.js out/socket-io/static/client.js
+
+--next
+
+-main server.nodejs.MultiServer
+-cp src
+-cp out/src-gen
+-D haxe3
+-lib protohx
+-lib nodejs
+
+
+-js out/socket-io/server.js
+
+--next
+
+-cmd cd out/socket-io
+-cmd pwd
+-cmd npm install
+-cmd node server.js
