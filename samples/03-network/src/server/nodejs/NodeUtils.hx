@@ -25,11 +25,11 @@ class NodeUtils {
         var a = untyped __js__('server.address()');
         var address:String = a.address;
         var port:Int = a.port;
-        return '${address}:${port}';
+        return ""+address+":"+port;
     }
 
     public static function addressPort(socket:NodeNetSocket):String {
-        return '${socket.remoteAddress}:${socket.remotePort}';
+        return ""+socket.remoteAddress+":"+socket.remotePort;
     }
 
     public static function writeSafe(socket:NodeNetSocket, frame:NodeBuffer):Void {
@@ -50,8 +50,8 @@ class NodeUtils {
 
     public static function writeMsg(socket:NodeNetSocket, msg:protohx.Message):Void {
         var bytes = msgToBytes(msg);
-        var frameSize = new NodeBuffer(4);
-        frameSize.writeUInt32LE(bytes.length, 0);
+        var frameSize = new NodeBuffer(common.MsgQueue.HEADER_SIZE);
+        frameSize.writeUInt16LE(bytes.length, 0);
         var frameData = toNodeBuffer(bytes);
         socket.write(frameSize);
         socket.write(frameData);
@@ -59,11 +59,11 @@ class NodeUtils {
 
     public static function toFrame(msg:protohx.Message):NodeBuffer {
         var b = new BytesOutput();
-        b.writeInt32(0);
+        b.writeUInt16(0);
         msg.writeTo(b);
         var bytes = b.getBytes();
         var frameData = toNodeBuffer(bytes);
-        frameData.writeUInt32LE(bytes.length - 4, 0);
+        frameData.writeUInt16LE(bytes.length - common.MsgQueue.HEADER_SIZE, 0);
         return frameData;
     }
 
@@ -83,7 +83,7 @@ class NodeUtils {
         var data = b.getBytes();
 
         var res = new BytesOutput();
-        res.writeInt32(data.length);
+        res.writeUInt16(data.length);
         res.write(data);
         return res.getBytes();
     }

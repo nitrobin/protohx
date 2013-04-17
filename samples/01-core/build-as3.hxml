@@ -8,7 +8,6 @@
 -main Main
 -cp src
 -cp out/src-gen
--D haxe3
 -lib protohx
 
 -as3 out/as3

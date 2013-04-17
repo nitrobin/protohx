@@ -71,12 +71,12 @@ class TestBasics extends haxe.unit.TestCase {
         im.writeTo(b);
         var bytes = b.getBytes();
         p.stdin.bigEndian = true;
-        p.stdin.writeInt32(bytes.length);
+        p.stdin.writeUInt16(bytes.length);
         p.stdin.write(bytes);
         p.stdin.flush();
 
         p.stdout.bigEndian = true;
-        var len = p.stdout.readInt32();
+        var len = p.stdout.readUInt16();
         var resBytes = p.stdout.read(len);
         var om = new OutputMessage();
         om.mergeFrom(resBytes);

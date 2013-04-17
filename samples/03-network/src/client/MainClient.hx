@@ -2,7 +2,6 @@ package client;
 
 import samples.ClientType;
 import samples.ClientPlatform;
-import haxe.remoting.SocketConnection;
 import flash.text.TextFieldType;
 import samples.PlayerData;
 import samples.LoginReq;
@@ -16,7 +15,6 @@ import common.SocketConnection;
 import protohx.Message;
 import protohx.Protohx;
 
-import haxe.ds.IntMap;
 import haxe.io.Bytes;
 
 import flash.text.TextField;
@@ -56,7 +54,7 @@ class PlayerNode extends flash.display.Sprite {
     }
 
     public function rebuild(animate:Bool) {
-        tf.text = '${player.nick} \n[${Config.getPlatformName(player.clientPlatform)}]';
+        tf.text = '' + player.nick + '\n[' + Config.getPlatformName(player.clientPlatform) + ']';
         if (animate) {
             var duration:Float = 1.0;
             var targetX:Float = player.x;
@@ -108,9 +106,7 @@ class AddressSprite extends flash.display.Sprite {
     public function new(host:String, port:Int) {
         super();
         hostTF = new TextField();
-        #if !android // nme 4 bug workaround
         hostTF.type = TextFieldType.INPUT;
-        #end
         hostTF.defaultTextFormat.size = 24;
         hostTF.text = host;
         hostTF.border = true;
@@ -122,9 +118,7 @@ class AddressSprite extends flash.display.Sprite {
         addChild(hostTF);
 
         portTF = new TextField();
-        #if !android // nme 4 bug workaround
         portTF.type = TextFieldType.INPUT;
-        #end
         portTF.defaultTextFormat.size = 24;
         portTF.text = Std.string(port);
         portTF.border = true;

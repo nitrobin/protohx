@@ -8,7 +8,6 @@
 -main Main
 -cp src
 -cp out/src-gen
--D haxe3
 -lib protohx
 -debug
 
@@ -16,4 +15,5 @@
 
 --next
 
-#-cmd java -jar out/java/java.jar -cp assets
+-cmd cd out/cs
+-cmd gmcs -recurse:*.cs -main:Test -out:Tester.exe-debug

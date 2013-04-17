@@ -6,7 +6,7 @@
 -main HaxeMain
 -cp src
 -cp out/src-gen-hx
--D haxe3
+-D neko_v2
 -lib protohx
 -neko out/run.n
 

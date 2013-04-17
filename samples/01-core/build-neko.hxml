@@ -8,7 +8,7 @@
 -main Main
 -cp src
 -cp out/src-gen
--D haxe3
+-D neko_v2
 -neko out/run.n
 -lib protohx
 

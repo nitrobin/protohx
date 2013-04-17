@@ -14,7 +14,6 @@
     <haxedef name="HXCPP_STACK_LINE" />
     <haxedef name="HXCPP_CHECK_POINTER" />
     <haxedef name="HXCPP_DEBUGGER" />
-    <haxedef name="haxe3" />
 	<haxelib name="nme" />
 	<haxelib name="protohx" />
 	<haxelib name="actuate" />

@@ -11,7 +11,6 @@
 package protohx;
 
 
-import haxe.ds.IntMap;
 import haxe.io.Output;
 import haxe.io.Bytes;
 import protohx.Protohx;

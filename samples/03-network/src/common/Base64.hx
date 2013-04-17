@@ -1,16 +1,23 @@
 package common;
+
+#if haxe3
+import haxe.crypto.BaseCode;
+#else
+import haxe.BaseCode;
+#end
+
 class Base64 {
     private inline static var BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    private static var codec:haxe.crypto.BaseCode;
+    private static var codec:BaseCode;
 
     public function new() {
 
     }
 
-    static function getCodec():haxe.crypto.BaseCode {
+    static function getCodec():BaseCode {
         if (codec == null) {
             var bytes = haxe.io.Bytes.ofString(BASE64);
-            codec = new haxe.crypto.BaseCode(bytes);
+            codec = new BaseCode(bytes);
         }
         return codec;
     }
