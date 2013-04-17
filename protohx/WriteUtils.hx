@@ -80,11 +80,11 @@ class WriteUtils {
         }
     }
     public static function write__TYPE_FIXED64(output:PT_OutputStream, value:PT_UInt64):Void {
-        output.writeInt(Protohx.getLow(value));
-        output.writeInt(Protohx.getHigh(value));
+        output.writeInt32(Protohx.getLow(value));
+        output.writeInt32(Protohx.getHigh(value));
     }
     public static function write__TYPE_FIXED32(output:PT_OutputStream, value:PT_Int):Void {
-        output.writeInt(value);
+        output.writeInt32(value);
     }
     public static function write__TYPE_BOOL(output:PT_OutputStream, value:PT_Bool):Void {
         output.writeByte(value ? 1 : 0);
@@ -119,11 +119,11 @@ class WriteUtils {
         write__TYPE_INT32(output, value);
     }
     public static function write__TYPE_SFIXED32(output:PT_OutputStream, value:PT_Int):Void {
-        output.writeInt(value);
+        output.writeInt32(value);
     }
     public static function write__TYPE_SFIXED64(output:PT_OutputStream, value:PT_Int64):Void {
-        output.writeInt(Protohx.getLow(value));
-        output.writeInt(Protohx.getHigh(value));
+        output.writeInt32(Protohx.getLow(value));
+        output.writeInt32(Protohx.getHigh(value));
     }
     public static function write__TYPE_SINT32(output:PT_OutputStream, value:PT_Int):Void {
         write__TYPE_UINT32(output, ZigZag.encode32(value));

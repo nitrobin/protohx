@@ -39,12 +39,16 @@ class NativeSession extends Session {
     public override function writeMsg(msg:protohx.Message):Void {
         try{
             var bytes = msgToBytes(msg);
-            socket.output.writeInt32(bytes.length);
+            socket.output.writeUInt16(bytes.length);
             socket.output.write(bytes);
             socket.output.flush();
         }catch(e:Dynamic){
             trace(e);
+            #if haxe3
             trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+            #else
+            trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+            #end
         }
     }
 

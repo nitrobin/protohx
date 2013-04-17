@@ -805,7 +805,7 @@ public final class Proto2Haxe {
                     }
                     content.append("\t\t\t\t{\n");
                     if (fdp.getType() == FieldDescriptorProto.Type.TYPE_MESSAGE) {
-                        content.append("\t\t\t\t\tthis." + lowerCamelCaseField + ".push(cast protohx.ReadUtils.read__TYPE_MESSAGE(input, new " + haxeType + "()));\n");
+                        content.append("\t\t\t\t\tthis." + lowerCamelCaseField + ".push(protohx.ReadUtils.read__TYPE_MESSAGE(input, new " + haxeType + "()));\n");
                     } else {
                         content.append("\t\t\t\t\tthis." + lowerCamelCaseField + ".push(cast protohx.ReadUtils.read__" + haxeWireType + "(input));\n");
                     }
@@ -825,7 +825,11 @@ public final class Proto2Haxe {
         if (repeated) {
             haxeType = "Array<" + haxeType + ">";
         }
-        return "\t@:isVar public var " + lowerCamelCaseField + "(get, set):" + haxeType + ";\n\n";
+        return "\t#if haxe3\n" +
+                "\t@:isVar public var " + lowerCamelCaseField + "(get, set):" + haxeType + ";\n" +
+                "\t#else\n" +
+                "\tpublic var " + lowerCamelCaseField + "(get_" + lowerCamelCaseField + ", set_" + lowerCamelCaseField + "):" + haxeType + ";\n" +
+                "\t#end\n\n";
     }
 
     private static String varHelperSetter(String lowerCamelCaseField, String upperCamelCaseField, String haxeType, boolean repeated, String className) {

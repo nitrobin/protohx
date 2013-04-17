@@ -7,7 +7,6 @@
 -main HaxeMain
 -cp src
 -cp out/src-gen-hx
--D haxe3
 -lib protohx
 -debug
 

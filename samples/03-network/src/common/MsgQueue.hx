@@ -5,6 +5,8 @@ import haxe.io.BytesBuffer;
 import haxe.io.Bytes;
 
 class MsgQueue {
+    public static inline var HEADER_SIZE:Int = 2;
+
     private var bytesBuff:Bytes;
     private var msgs:List<ProtocolMessage>;
 
@@ -36,15 +38,15 @@ class MsgQueue {
             buffer.add(bytes);
             bytesBuff = buffer.getBytes();
         }
-        if (bytesBuff == null || bytesBuff.length < 4) {
+        if (bytesBuff == null || bytesBuff.length < HEADER_SIZE) {
             return;
         }
         var available = bytesBuff.length;
         var bi = new BytesInput(bytesBuff);
         bi.bigEndian = false;
-        while (available >= 4) {
-            var packetSize = bi.readInt32();
-            available -= 4;
+        while (available >= HEADER_SIZE) {
+            var packetSize = bi.readUInt16();
+            available -= HEADER_SIZE;
             if (packetSize <= available) {
                 available -= packetSize;
                 var msgBytes = bi.read(packetSize);
@@ -52,7 +54,7 @@ class MsgQueue {
                 msg.mergeFrom(msgBytes);
                 addMsg(msg);
             } else {
-                available += 4;
+                available += HEADER_SIZE;
                 break;
             }
         }

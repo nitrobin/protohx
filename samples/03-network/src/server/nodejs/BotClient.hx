@@ -31,9 +31,9 @@ class BotClient {
         var client:NodeNetSocket = net.connect(port, host);
         var id:Int = 0;
         var player:PlayerData = null;
-        var timer:Timer = null;
+        var timer:Int = 0;
         client.on(NodeC.EVENT_STREAM_CONNECT, function() {
-            console.log('client connected to: ${client.addressPort()}');
+            console.log('client connected to: '+ client.addressPort());
             var msg = new ProtocolMessage();
             msg.type = MsgType.LOGIN_REQ;
             msg.loginReq = new LoginReq();
@@ -56,15 +56,14 @@ class BotClient {
                 } else if (msg.type == MsgType.ADD_PLAYER_RES) {
                     if (id == msg.addPlayerRes.id) {
                         player = msg.addPlayerRes;
-                        timer = new Timer(1000 + Std.int(1000 * Math.random()));
-                        timer.run = function() {
+                        timer = Node.setInterval(function() {
                             var msg = new ProtocolMessage();
                             msg.type = MsgType.UPDATE_PLAYER_REQ;
                             msg.updatePlayerReq = new PlayerData();
                             msg.updatePlayerReq.x = player.x + Math.floor(Math.random() * 40 - 20);
                             msg.updatePlayerReq.y = player.y + Math.floor(Math.random() * 40 - 20);
                             client.writeMsgSafe(msg);
-                        }
+                        }, 1000 + Std.int(1000 * Math.random()));
                     }
                 } else if (msg.type == MsgType.UPDATE_PLAYER_RES) {
                     if (id == msg.updatePlayerRes.id) {
@@ -80,8 +79,8 @@ class BotClient {
             }
         });
         client.on(NodeC.EVENT_STREAM_CLOSE, function() {
-            if (timer != null) {
-                timer.stop();
+            if (timer != 0) {
+                Node.clearInterval(timer);
             }
 //            console.log('server got client close: ${client.getAP()}');
         });

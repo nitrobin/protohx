@@ -10,13 +10,13 @@ public class JavaMain {
             DataInputStream dis = new DataInputStream(in);
             DataOutputStream dos = new DataOutputStream(System.out);
 
-            final int len = dis.readInt();
+                final int len = dis.readUnsignedShort();
             final byte[] frame = new byte[len];
             dis.read(frame);
             final Calc.InputMessage inputMessage = Calc.InputMessage.parseFrom(frame);
             final Calc.OutputMessage outputMessage = process(inputMessage);
             final int size = outputMessage.getSerializedSize();
-            dos.writeInt(size);
+            dos.writeShort(size);
             outputMessage.writeTo(dos);
             dos.flush();
             System.out.flush();

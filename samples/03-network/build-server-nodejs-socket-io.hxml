@@ -14,7 +14,6 @@
 -main server.nodejs.SocketIoServer
 -cp src
 -cp out/src-gen
--D haxe3
 -lib protohx
 -lib nodejs
 

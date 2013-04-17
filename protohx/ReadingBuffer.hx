@@ -28,7 +28,7 @@ class ReadingBuffer {
         return buf.readString(len);
     }
 
-    public function readInt() {
+    public function readInt32() {
         bytesAvailable -= 4;
         return buf.readInt32();
     }

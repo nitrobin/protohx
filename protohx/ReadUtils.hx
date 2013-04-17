@@ -20,8 +20,8 @@ class ReadUtils {
         case WireType.VARINT:
             while (input.readUnsignedByte() >= 0x80) {}
         case WireType.FIXED_64_BIT:
-            input.readInt();
-            input.readInt();
+            input.readInt32();
+            input.readInt32();
         case WireType.LENGTH_DELIMITED:
             var i:PT_UInt = read__TYPE_UINT32(input);
             while (i != 0) {
@@ -29,7 +29,7 @@ class ReadUtils {
                 i--;
             }
         case WireType.FIXED_32_BIT:
-            input.readInt();
+            input.readInt32();
         default:
             throw new PT_IOError("Invalid wire type: " + wireType);
         }
@@ -91,12 +91,20 @@ class ReadUtils {
         return cast read__TYPE_UINT32(input) ;
     }
     public static function read__TYPE_FIXED64(input:PT_InputStream):PT_UInt64 {
-        var low = input.readInt();
-        var high = input.readInt();
+        var low = input.readInt32();
+        var high = input.readInt32();
+#if haxe3
         return Protohx.newUInt64(high, low);
+#else
+        return Protohx.newUInt64(haxe.Int32.toInt(high), haxe.Int32.toInt(low));
+#end
     }
     public static function read__TYPE_FIXED32(input:PT_InputStream):PT_Int {
-        return input.readInt();
+#if haxe3
+        return input.readInt32();
+#else
+        return haxe.Int32.toInt(input.readInt32());
+#end
     }
     public static function read__TYPE_BOOL(input:PT_InputStream):PT_Bool {
         return read__TYPE_UINT32(input) != 0;
@@ -137,12 +145,20 @@ class ReadUtils {
         return read__TYPE_INT32(input);
     }
     public static function read__TYPE_SFIXED32(input:PT_InputStream):PT_Int {
-        return input.readInt();
+#if haxe3
+        return input.readInt32();
+#else
+        return haxe.Int32.toInt(input.readInt32());
+#end
     }
     public static function read__TYPE_SFIXED64(input:PT_InputStream):PT_Int64 {
-        var low = input.readInt();
-        var high = input.readInt();
+        var low = input.readInt32();
+        var high = input.readInt32();
+#if haxe3
         return Protohx.newInt64(high, low);
+#else
+        return Protohx.newInt64(haxe.Int32.toInt(high), haxe.Int32.toInt(low));
+#end
     }
     public static function read__TYPE_SINT32(input:PT_InputStream):PT_Int {
         return ZigZag.decode32(read__TYPE_UINT32(input));
@@ -156,7 +172,7 @@ class ReadUtils {
         return Protohx.newInt64(highNew, lowNew);
     }
     //TODO check types
-    public static function read__TYPE_MESSAGE(input:PT_InputStream, message:Message):Message {
+    public static function read__TYPE_MESSAGE<T:Message>(input:PT_InputStream, message:T):T {
         var length:PT_UInt = read__TYPE_UINT32(input);
         if (input.bytesAvailable < cast length) {
             throw new PT_IOError("Invalid message length: " + length);

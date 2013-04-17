@@ -57,7 +57,7 @@ class SocketConnection {
         var b = new BytesOutput();
         msg.writeTo(b);
         var bytes = b.getBytes();
-        socket.writeInt(bytes.length);
+        socket.writeShort(bytes.length);
         socket.writeBytes(cast bytes.getData());
     }
 
@@ -69,7 +69,7 @@ class SocketConnection {
             var bs = Bytes.ofData(cast b);
             addBytes(bs);
         } catch (e:Dynamic) {
-            trace('error: ' + haxe.Json.stringify(e));
+            trace('error: ' + e);
         }
     }
 
@@ -94,7 +94,11 @@ class SocketConnection {
             socket.connect(new sys.net.Host(host), port);
         }catch(e:Dynamic){
             trace(e);
+            #if haxe3
             trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+            #else
+            trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+            #end
             onClose();
             return;
         }
@@ -120,6 +124,11 @@ class SocketConnection {
                 socket.close();
             } catch (e:Dynamic) {
                 trace(e);
+                #if haxe3
+                trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+                #else
+                trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+                #end
             }
         };
     }
@@ -138,7 +147,7 @@ class SocketConnection {
         var b = new BytesOutput();
         msg.writeTo(b);
         var bytes = b.getBytes();
-        socket.output.writeInt32(bytes.length);
+        socket.output.writeUInt16(bytes.length);
         socket.output.writeBytes(bytes, 0, bytes.length);
     }
 }
@@ -166,7 +175,7 @@ class SocketConnection {
         var data = b.getBytes();
 
         var res = new BytesOutput();
-        res.writeInt32(data.length);
+        res.writeUInt16(data.length);
         res.write(data);
         return res.getBytes();
     }
