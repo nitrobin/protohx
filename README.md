@@ -1,8 +1,9 @@
 Protohx is crossplatform implementation of "Google's Protocol Buffers" for haxe 3.
 
-This is partial port of ActionScript3 protoc plugin "protoc-gen-as3" for haxe 3.
+This is partial port of ActionScript3 protoc plugin "protoc-gen-as3" for haxe.
 Currently implemented only basic functionality: read/write messages from/to haxe.io.Bytes.
 
+haxe 3 and haxe 2.10 compatible. Core functionality doesn't depend on third-party libraries.
 
 ## WARNING
 Project is still in alpha. Be careful for production using.
@@ -32,8 +33,9 @@ BSD
     * neko 2.0
     * cpp (linux32, win32, android)
     * js (node.js, phantomjs)
-    * java
     * php
+    * java (only for haxe 3)
+    * as3 (only for haxe 3)
 
 
 ## System requirements
