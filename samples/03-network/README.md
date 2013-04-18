@@ -1,5 +1,7 @@
 Crossplatform network Protohx example. :)
 
+[Prebuild demo files (node.js/neko server and html5/android/flash/linux/node.js clients) ](https://bitbucket.org/nitrobin/protohx/downloads/protohx-demo.tar.gz)
+
 
 ## Client targets
 ### Client implemented for most of NME targets:
