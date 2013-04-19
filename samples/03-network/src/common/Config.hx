@@ -3,7 +3,7 @@ import samples.ClientType;
 import samples.ClientPlatform;
 
 class Config {
-    public static inline var DEFAULT_HOST:String = "127.0.0.1";
+    public static inline var DEFAULT_HOST:String = #if android "192.168.0.1" #else "127.0.0.1" #end;
     public static inline var DEFAULT_TCP_PORT:Int = 15000;
     public static inline var DEFAULT_HTTP_PORT:Int = 15001;
     public static inline var ADDITIONAL_POLICY_PORT:Int = 15002;
@@ -31,17 +31,17 @@ class Config {
         return
 #if (flash || as3)
             ClientPlatform.CP_FLASH;
-            #elseif (android)
+#elseif (android)
             ClientPlatform.CP_ANDROID;
-            #elseif (js || html5)
+#elseif (js || html5)
             ClientPlatform.CP_HTML5;
 #elseif (linux)
             ClientPlatform.CP_LINUX;
-            #elseif (windows)
+#elseif (windows)
             ClientPlatform.CP_WINDOWS;
-            #elseif (ios)
+#elseif (ios)
             ClientPlatform.CP_IOS
-            #else
+#else
         ClientPlatform.CP_UNKNOWN;
 #end
     }
