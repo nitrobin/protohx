@@ -15,7 +15,7 @@ class Context {
     public static inline var DEFAULUT_PROTOC_PATH = "protoc";
 
     public function new(protohxBaseDir) {
-        this.protohxBaseDir = protohxBaseDir;
+        this.protohxBaseDir = PathHelper.norm(protohxBaseDir);
     }
 
     public function getDefaultConfigFileName():String {
@@ -45,7 +45,7 @@ class Context {
 
     public function getProtocPluginPath():String {
         var string = new Path(protohxBaseDir + "/tools/plugin/bin/plugin").toString();
-        if (PlatformHelper.getHostPlatform() == Platform.WINDOWS) {
+        if (PlatformHelper.isWindows()) {
             string += ".bat";
         }
         return string;
@@ -113,38 +113,40 @@ class CommandLineTools {
     }
 
     public static function executeTask(task:TaskDef, context:Context):Void {
+        if (task.cleanOut) {
+            if (task.haxeOut != null) { PathHelper.removeDirectory(task.haxeOut); }
+            if (task.javaOut != null) { PathHelper.removeDirectory(task.javaOut); }
+        }
+        if (task.haxeOut != null) { PathHelper.mkdirs(task.haxeOut); }
+        if (task.javaOut != null) { PathHelper.mkdirs(task.javaOut); }
+
         var protocPath = context.getProtocPath();
         var args:Array<String> = [
-        "--proto_path=" + task.protoPath
+            "--proto_path=" + PathHelper.norm(task.protoPath)
         ];
         if (task.haxeOut != null) {
-            //TODO optimize
             var pluginPath = context.getProtocPluginPath();
-            PlatformHelper.setExecutableBit(pluginPath);
-            args.push("--plugin=protoc-gen-haxe=" + pluginPath);
-            args.push("--haxe_out=" + task.haxeOut);
+            PlatformHelper.setExecutableBit(pluginPath); // TODO optimize
+            args.push("--plugin=protoc-gen-haxe=" + PathHelper.norm(pluginPath));
+            args.push("--haxe_out=" + PathHelper.norm(task.haxeOut));
         }
         if (task.javaOut != null) {
-            args.push("--java_out=" + task.javaOut);
+            args.push("--java_out=" + PathHelper.norm(task.javaOut));
         }
-        args = args.concat(task.protoFiles);
-        if (task.cleanOut) {
-            if (task.haxeOut != null) {PathHelper.removeDirectory(task.haxeOut);}
-            if (task.javaOut != null) {PathHelper.removeDirectory(task.javaOut);}
+        for (pf in task.protoFiles){
+            args.push(PathHelper.norm(pf));
         }
-        if (task.haxeOut != null) {
-            PathHelper.mkdirs(task.haxeOut);
-        }
-        if (task.javaOut != null) {
-            PathHelper.mkdirs(task.javaOut);
-        }
-        var code = Sys.command(protocPath, args);
+
+        var code = PlatformHelper.command(protocPath, args);
+        Sys.println("----");
         if (code != 0) {
-            Sys.println("Check config and proto-files.");
-            Sys.println("TIP: Require protoc and java in system.");
+            Sys.println("TIP: Check config and proto-files.");
+            Sys.println("     Check protoc and java in system path.");
+            Sys.println("FAIL");
         } else {
-            if (task.haxeOut != null) {Sys.println('Haxe sources generated in ${task.haxeOut}');}
-            if (task.javaOut != null) {Sys.println('Java sources generated in ${task.javaOut}');}
+            if (task.haxeOut != null) {Sys.println("Haxe sources generated in '" + PathHelper.norm(task.haxeOut) + "'");}
+            if (task.javaOut != null) {Sys.println("Java sources generated in '" + PathHelper.norm(task.javaOut) + "'");}
+            Sys.println("SUCCESS");
         }
     }
 
@@ -173,7 +175,7 @@ class CommandLineTools {
             if (args.length > 0) {
                 var cmd = args[0];
                 if (cmd == "generate" && args.length >= 1) {
-                    Sys.println('protocPath: [${context.getProtocPath()}]');
+                    Sys.println("protocPath: " + context.getProtocPath());
                     var fileName = (args.length > 1 ? args[1] : context.getDefaultConfigFileName());
                     var config:TaskDef = parseConfig(fileName);
                     if (config.haxeOut != null || config.javaOut != null) {
@@ -187,7 +189,7 @@ class CommandLineTools {
                         config.protocPath = args[1];
                     }
                     context.saveConfig(config);
-                    Sys.println('protocPath: [${context.getProtocPath()}]');
+                    Sys.println("protocPath: " + context.getProtocPath());
                 } else if (cmd == "config" && args.length >= 1) {
                     var fileName = (args.length > 1 ? args[1] : context.getDefaultConfigFileName());
                     saveDefaultConfig(fileName);

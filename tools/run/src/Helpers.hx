@@ -22,6 +22,18 @@ enum Platform {
 }
 
 class PathHelper {
+    public static function norm(path:String, quotes:Bool = false):String {
+        path = StringTools.replace(path, "\\", "/");
+        path = StringTools.replace(path, "//", "/");
+        if(PlatformHelper.isWindows()){
+            path = StringTools.replace(path, "/", "\\");
+        }
+        if(quotes){
+            path = "\"" + path + "\"";
+        }
+        return path;
+    }
+
     public static function mkdirs(directory:String):Void {
         directory = StringTools.replace(directory, "\\", "/");
         var total = "";
@@ -70,6 +82,10 @@ class PlatformHelper {
     private static var _hostPlatform:Platform;
 // from http://code.google.com/p/nekonme/source/browse/tools/helpers/PlatformHelper.hx
 
+    public static function isWindows():Bool {
+        return getHostPlatform() == Platform.WINDOWS;
+    }
+
     public static function getHostPlatform():Platform {
         if (_hostPlatform == null) {
             if (new EReg ("window", "i").match(Sys.systemName())) {
@@ -83,9 +99,16 @@ class PlatformHelper {
         return _hostPlatform;
     }
 
+    public static function command( cmd : String, ?args : Array<String> ) : Int {
+        Sys.println("---- PlatformHelper.command: ");
+        Sys.println("  Sys.cwd: " + Sys.getCwd());
+        Sys.println("  Sys.command: '" + cmd + "' '" + args.join("' '") + "'");
+        return Sys.command(cmd, args);
+    }
+
     public static function setExecutableBit(executable:String):Void {
         if (PlatformHelper.getHostPlatform() == Platform.LINUX) {
-            Sys.command("chmod", ["a+x", executable]);
+            PlatformHelper.command("chmod", ["a+x", PathHelper.norm(executable)]);
         }
     }
 }
