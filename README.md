@@ -8,8 +8,6 @@ haxe 3 and haxe 2.10 compatible. Core functionality doesn't depend on third-part
 ## WARNING
 Project is still in alpha. Be careful for production using.
 
-**Currently "haxelib run protohx" may not work on windows system, it will be fixed in near future.**
-
 ## License
 BSD
 
@@ -32,8 +30,8 @@ BSD
 ## Tested targets 
     * flash
     * neko 2.0
-    * cpp (linux32, android)
-    * js (node.js, phantomjs)
+    * cpp (linux32, win32, android)
+    * js (node.js and google-chrome 26)
     * php
     * java (only for haxe 3)
     * as3 (only for haxe 3)
