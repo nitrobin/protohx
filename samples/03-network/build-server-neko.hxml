@@ -1,6 +1,6 @@
 
 -cmd haxelib run protohx generate protohx.json
--cmd mkdir -p out
+#-cmd mkdir -p out
 
 --next
 
@@ -8,7 +8,6 @@
 -cp src
 -cp out/src-gen
 -lib protohx
--lib nodejs
 
 
 -neko out/MainServer.n

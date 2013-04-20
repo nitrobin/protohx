@@ -5,7 +5,7 @@ import haxe.Unserializer;
 import haxe.io.Path;
 import haxe.rtti.Meta;
 import sys.io.File;
-import neko.Lib;
+import sys.FileSystem;
 import sys.io.Process;
 import sys.FileSystem;
 import Helpers;
@@ -15,7 +15,7 @@ class Context {
     public static inline var DEFAULUT_PROTOC_PATH = "protoc";
 
     public function new(protohxBaseDir) {
-        this.protohxBaseDir = PathHelper.norm(protohxBaseDir);
+        this.protohxBaseDir = protohxBaseDir;
     }
 
     public function getDefaultConfigFileName():String {
@@ -43,13 +43,10 @@ class Context {
         return path != null ? path : DEFAULUT_PROTOC_PATH;
     }
 
-    public function getProtocPluginPath():String {
-        var string = new Path(protohxBaseDir + "/tools/plugin/bin/plugin").toString();
-        if (PlatformHelper.isWindows()) {
-            string += ".bat";
-        }
-        return string;
-    }
+	public function getProtohxBaseDir():String {
+		return protohxBaseDir;
+	}
+	
 }
 
 
@@ -113,40 +110,64 @@ class CommandLineTools {
     }
 
     public static function executeTask(task:TaskDef, context:Context):Void {
-        if (task.cleanOut) {
-            if (task.haxeOut != null) { PathHelper.removeDirectory(task.haxeOut); }
-            if (task.javaOut != null) { PathHelper.removeDirectory(task.javaOut); }
-        }
-        if (task.haxeOut != null) { PathHelper.mkdirs(task.haxeOut); }
-        if (task.javaOut != null) { PathHelper.mkdirs(task.javaOut); }
+        if (task.haxeOut != null) { 
+            Sys.println("task.haxeOut: " + task.haxeOut);			
+			if (task.cleanOut){
+                Sys.println("clean: " + task.haxeOut);			
+			    PathHelper.removeDirectory(task.haxeOut);
+			}
+		    PathHelper.mkdirs(task.haxeOut);
+            task.haxeOut = FileSystem.fullPath(task.haxeOut);
+	    }
+        if (task.javaOut != null) { 
+			if (task.cleanOut){
+                Sys.println("clean: " + task.javaOut);			
+			    PathHelper.removeDirectory(task.javaOut);
+			}
+		    PathHelper.mkdirs(task.javaOut);
+            task.javaOut = FileSystem.fullPath(task.javaOut);
+	    }
 
-        var protocPath = context.getProtocPath();
-        var args:Array<String> = [
-            "--proto_path=" + PathHelper.norm(task.protoPath)
-        ];
+		var oldCwd = Sys.getCwd();
+		var newCwd = oldCwd;
+        var args:Array<String> = [];
         if (task.haxeOut != null) {
-            var pluginPath = context.getProtocPluginPath();
-            PlatformHelper.setExecutableBit(pluginPath); // TODO optimize
-            args.push("--plugin=protoc-gen-haxe=" + PathHelper.norm(pluginPath));
+			var pluginFileName = "plugin";
+			if (PlatformHelper.isWindows()) {
+				pluginFileName += ".bat";
+			}
+			var pluginDir = FileSystem.fullPath(context.getProtohxBaseDir() + "/tools/plugin/bin/");
+            if (!PlatformHelper.isWindows()) {
+				var pluginPath = PathHelper.norm(pluginDir + "/" + pluginFileName);
+			    PlatformHelper.setExecutableBit(pluginPath); // TODO optimize 
+			}              
+            newCwd = pluginDir;
+            args.push("--plugin=protoc-gen-haxe=" + pluginFileName);
             args.push("--haxe_out=" + PathHelper.norm(task.haxeOut));
         }
         if (task.javaOut != null) {
             args.push("--java_out=" + PathHelper.norm(task.javaOut));
         }
+		args.push("--proto_path=" + PathHelper.norm(FileSystem.fullPath(task.protoPath)));
         for (pf in task.protoFiles){
-            args.push(PathHelper.norm(pf));
+            args.push(PathHelper.norm(FileSystem.fullPath(pf)));
         }
 
+		Sys.setCwd(newCwd);
+        var protocPath = context.getProtocPath();
         var code = PlatformHelper.command(protocPath, args);
+		Sys.setCwd(oldCwd);
         Sys.println("----");
         if (code != 0) {
             Sys.println("TIP: Check config and proto-files.");
             Sys.println("     Check protoc and java in system path.");
+            Sys.println("----");
             Sys.println("FAIL");
         } else {
             if (task.haxeOut != null) {Sys.println("Haxe sources generated in '" + PathHelper.norm(task.haxeOut) + "'");}
             if (task.javaOut != null) {Sys.println("Java sources generated in '" + PathHelper.norm(task.javaOut) + "'");}
-            Sys.println("SUCCESS");
+           Sys.println("----");
+           Sys.println("SUCCESS");
         }
     }
 

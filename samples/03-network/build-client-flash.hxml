@@ -1,6 +1,6 @@
 
 -cmd haxelib run protohx generate protohx.json
--cmd mkdir -p out
+#-cmd mkdir -p out
 
 --next
 

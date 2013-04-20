@@ -5,7 +5,6 @@ import haxe.Unserializer;
 import haxe.io.Path;
 import haxe.rtti.Meta;
 import sys.io.File;
-import neko.Lib;
 import sys.io.Process;
 import sys.FileSystem;
 
@@ -22,14 +21,11 @@ enum Platform {
 }
 
 class PathHelper {
-    public static function norm(path:String, quotes:Bool = false):String {
+    public static function norm(path:String):String {
         path = StringTools.replace(path, "\\", "/");
         path = StringTools.replace(path, "//", "/");
         if(PlatformHelper.isWindows()){
             path = StringTools.replace(path, "/", "\\");
-        }
-        if(quotes){
-            path = "\"" + path + "\"";
         }
         return path;
     }
