@@ -1,0 +1,20 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/java-server
+-cmd wget -O out/netty.jar -c http://repo2.maven.org/maven2/io/netty/netty/3.6.5.Final/netty-3.6.5.Final.jar
+
+--next
+
+-main server.java.MainServer
+-cp src
+-cp out/src-gen
+-lib protohx
+-lib javastd
+
+
+-java out/java-server
+-java-lib out/netty.jar
+
+--next
+
+-cmd neko out/MainServer.n

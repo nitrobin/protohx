@@ -12,7 +12,8 @@ class Config {
         return  switch(code){
             case ClientType.CT_BOT: "bot";
             case ClientType.CT_HUMAN: "human";
-            case ClientType.CT_UNKNOWN:default: "unknown";
+            //case ClientType.CT_UNKNOWN:
+            default: "unknown";
         }
     }
     public static function getPlatformName(code:Int):String {
@@ -24,7 +25,8 @@ class Config {
             case ClientPlatform.CP_WINDOWS: "win";
             case ClientPlatform.CP_IOS: "ios";
             case ClientPlatform.CP_NODEJS: "node.js";
-            case ClientPlatform.CP_UNKNOWN:default: "unknown";
+            //case ClientPlatform.CP_UNKNOWN:
+            default: "unknown";
         }
     }
     public static function getPlatform():Int {
