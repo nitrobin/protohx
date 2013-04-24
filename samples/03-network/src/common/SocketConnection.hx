@@ -82,7 +82,7 @@ class SocketConnection {
         socket.removeEventListener(Event.CONNECT, connectHandler);
     }
 }
-#elseif cpp
+#elseif (neko||cpp)
 class SocketConnection {
     var socket:sys.net.Socket;
 
