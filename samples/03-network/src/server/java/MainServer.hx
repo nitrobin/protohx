@@ -126,6 +126,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     @:overload
+    @:throws("java.lang.Exception")
     public override function handleUpstream(ctx:ChannelHandlerContext, e:ChannelEvent):Void
     /*throws Exception*/ {
         if (Std.is(e, ChannelStateEvent)) {
@@ -134,6 +135,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
         super.handleUpstream(ctx, e);
     }
     @:overload
+    @:throws("java.lang.Exception")
     public override function channelConnected(ctx:ChannelHandlerContext, e:ChannelStateEvent):Void
     /*throws Exception*/ {
         var c = e.getChannel();
@@ -144,7 +146,9 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     @:overload
-    public override function channelDisconnected(ctx:ChannelHandlerContext, e:ChannelEvent):Void
+    @:throws("java.lang.Exception")
+    public override function channelDisconnected(ctx:ChannelHandlerContext,
+                                 e:ChannelStateEvent):Void
     /*throws Exception*/ {
         var session: NettySession = cast ctx.getAttachment();
         if(session!=null){
@@ -154,6 +158,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     @:overload
+    @:throws("java.lang.Exception")
     public override function messageReceived(ctx:ChannelHandlerContext, e:MessageEvent ) {
         if(Std.is(e.getMessage(), ChannelBuffer)){
             var buffer:ChannelBuffer = cast(e.getMessage(), ChannelBuffer);
@@ -169,6 +174,7 @@ class ServerHandler extends SimpleChannelUpstreamHandler {
     }
 
     @:overload
+    @:throws("java.lang.Exception")
     public override function exceptionCaught(ctx:ChannelHandlerContext, e:ExceptionEvent) {
         trace("Unexpected exception from downstream." + e.getCause());
         e.getChannel().close();

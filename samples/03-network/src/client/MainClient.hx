@@ -21,8 +21,8 @@ import flash.text.TextField;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import com.eclecticdesignstudio.motion.Actuate;
-import com.eclecticdesignstudio.motion.easing.Quad;
+import motion.Actuate;
+import motion.easing.Quad;
 
 
 class PlayerNode extends flash.display.Sprite {

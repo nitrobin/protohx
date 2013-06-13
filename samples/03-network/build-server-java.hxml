@@ -9,7 +9,7 @@
 -cp src
 -cp out/src-gen
 -lib protohx
--lib javastd
+#-lib javastd
 
 
 -java out/java-server
@@ -17,4 +17,4 @@
 
 --next
 
--cmd neko out/MainServer.n
+-cmd java -jar out/java-server/java-server.jar
