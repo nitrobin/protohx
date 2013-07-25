@@ -137,12 +137,12 @@ class CommandLineTools {
 				pluginFileName += ".bat";
 			}
 			var pluginDir = FileSystem.fullPath(context.getProtohxBaseDir() + "/tools/plugin/bin/");
-            if (!PlatformHelper.isWindows()) {
 				var pluginPath = PathHelper.norm(pluginDir + "/" + pluginFileName);
+                        if (!PlatformHelper.isWindows()) {
 			    PlatformHelper.setExecutableBit(pluginPath); // TODO optimize 
 			}              
             newCwd = pluginDir;
-            args.push("--plugin=protoc-gen-haxe=" + pluginFileName);
+            args.push("--plugin=protoc-gen-haxe=" + (PlatformHelper.isWindows()?pluginFileName:pluginPath));
             args.push("--haxe_out=" + PathHelper.norm(task.haxeOut));
         }
         if (task.javaOut != null) {
