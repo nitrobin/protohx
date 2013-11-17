@@ -799,7 +799,7 @@ public final class Proto2Haxe {
                         case TYPE_SFIXED64:
                         case TYPE_SINT64:
                         case TYPE_ENUM:
-                            content.append("\t\t\t\tif ((tag & 7) == protohx.WireType.LENGTH_DELIMITED) {\n");
+                            content.append("\t\t\t\tif (cast((tag & 7), PT_UInt) == protohx.WireType.LENGTH_DELIMITED) {\n");
                             content.append("\t\t\t\t\tprotohx.ReadUtils.readPackedRepeated(input, protohx.ReadUtils.read__" + haxeWireType + ", this." + lowerCamelCaseField + ");\n");
                             content.append("\t\t\t\t} else ");
                     }
@@ -825,11 +825,7 @@ public final class Proto2Haxe {
         if (repeated) {
             haxeType = "Array<" + haxeType + ">";
         }
-        return "\t#if haxe3\n" +
-                "\t@:isVar public var " + lowerCamelCaseField + "(get, set):" + haxeType + ";\n" +
-                "\t#else\n" +
-                "\tpublic var " + lowerCamelCaseField + "(get_" + lowerCamelCaseField + ", set_" + lowerCamelCaseField + "):" + haxeType + ";\n" +
-                "\t#end\n\n";
+        return "\t@:isVar public var " + lowerCamelCaseField + "(get, set):" + haxeType + ";\n";
     }
 
     private static String varHelperSetter(String lowerCamelCaseField, String upperCamelCaseField, String haxeType, boolean repeated, String className) {

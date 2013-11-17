@@ -31,7 +31,7 @@ class Message {
      * number of bytes being read.</p>
      */
     public function mergeFrom(input:Bytes):Void {
-        readFromSlice(new ReadingBuffer(input), 0);
+        readFromSlice(ReadingBuffer.fromBytes(input), 0);
     }
     /**
      * Like <code>mergeFrom()</code>, but does not read until EOF. Instead,
@@ -49,7 +49,7 @@ class Message {
      * @see #writeDelimitedTo()
      */
     public function mergeDelimitedFrom(input:Bytes):Void {
-        ReadUtils.read__TYPE_MESSAGE(new ReadingBuffer(input), this);
+        ReadUtils.read__TYPE_MESSAGE(ReadingBuffer.fromBytes(input), this);
     }
     /**
      * Serializes the message and writes it to <code>output</code>.

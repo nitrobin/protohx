@@ -4,32 +4,39 @@ import haxe.io.Bytes;
 import haxe.io.BytesInput;
 
 class ReadingBuffer {
-    public var length (default, null):Int;
-    public var bytesAvailable (default, null):Int;
+    public var length (get, null):Int;
+    public var bytesAvailable (get, null):Int;
 
     private var buf:BytesInput;
 
-    public function new(bytes:Bytes) {
-        this.length = bytes.length;
-        this.bytesAvailable = length;
-        this.buf = new BytesInput(bytes);
+    public function new(buf:BytesInput) {
+        this.buf = buf;
         Protohx.setInputEndian(this.buf);
     }
 
-    public function readBytes(len:Int):Bytes {
+    public inline static function fromBytes(bytes:Bytes, ?pos : Int, ?len : Int) {
+        return new ReadingBuffer(new BytesInput(bytes, pos, len));
+    }
+
+    public inline function get_length():Int {
+        return buf.length;
+    }
+
+    public inline function get_bytesAvailable():Int {
+        return buf.length - buf.position;
+    }
+
+    public inline function readBytes(len:Int):Bytes {
         var b = Bytes.alloc(len);
         buf.readBytes(b, 0, len);
-        bytesAvailable -= len;
         return b;
     }
 
-    public function readUTFBytes(len:Int):String {
-        bytesAvailable -= len;
+    public inline function readUTFBytes(len:Int):String {
         return buf.readString(len);
     }
 
-    public function readInt32() {
-        bytesAvailable -= 4;
+    public inline function readInt32() {
         return buf.readInt32();
     }
 
@@ -38,20 +45,17 @@ class ReadingBuffer {
 //        return buf.readInt32();
 //    }
 
-    public function readUnsignedByte() {
-        bytesAvailable -= 1;
+    public inline function readUnsignedByte() {
         return buf.readByte();
     }
 //    public function readByte() {
 //        bytesAvailable -= 1;
 //        return buf.readByte();
 //    }
-    public function readDouble() {
-        bytesAvailable -= 8;
+    public inline function readDouble() {
         return buf.readDouble();
     }
-    public function readFloat() {
-        bytesAvailable -= 4;
+    public inline function readFloat() {
         return buf.readFloat();
     }
 }

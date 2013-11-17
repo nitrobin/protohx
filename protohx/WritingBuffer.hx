@@ -48,11 +48,7 @@ class WritingBuffer {
     }
 
     public function writeInt32(v:Int):Void {
-#if haxe3
         buf.writeInt32(v);
-#else
-        buf.writeInt32(haxe.Int32.ofInt(v));
-#end
         position += 4;
     }
 

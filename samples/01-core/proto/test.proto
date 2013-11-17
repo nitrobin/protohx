@@ -42,7 +42,6 @@ message ComplexMessage {
     required MsgType typeOpt  = 10;
 
     optional string msgOpt    = 11;
-     repeated sint32  rnds      = 12;
 }
 
 
@@ -55,6 +54,7 @@ message IntTestMessage {
     optional sint64 sui64 = 6;
     optional float f = 7;
     optional double d = 8;
+    repeated sint32  rnds      = 9;
 }
 
 message Foo {

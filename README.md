@@ -5,7 +5,7 @@ There is new powerfull implementation from original "protoc-gen-as3" author http
 This is partial port of ActionScript3 protoc plugin "protoc-gen-as3" for haxe.
 Currently implemented only basic functionality: read/write messages from/to haxe.io.Bytes.
  
-haxe 3 and haxe 2.10 compatible. Core functionality doesn't depend on third-party libraries.
+haxe 3 compatible. Core functionality doesn't depend on third-party libraries.
 
 ## WARNING
 Project is still in alpha. Be careful for production using.

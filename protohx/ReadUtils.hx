@@ -93,18 +93,10 @@ class ReadUtils {
     public static function read__TYPE_FIXED64(input:PT_InputStream):PT_UInt64 {
         var low = input.readInt32();
         var high = input.readInt32();
-#if haxe3
         return Protohx.newUInt64(high, low);
-#else
-        return Protohx.newUInt64(haxe.Int32.toInt(high), haxe.Int32.toInt(low));
-#end
     }
     public static function read__TYPE_FIXED32(input:PT_InputStream):PT_Int {
-#if haxe3
         return input.readInt32();
-#else
-        return haxe.Int32.toInt(input.readInt32());
-#end
     }
     public static function read__TYPE_BOOL(input:PT_InputStream):PT_Bool {
         return read__TYPE_UINT32(input) != 0;
@@ -145,20 +137,12 @@ class ReadUtils {
         return read__TYPE_INT32(input);
     }
     public static function read__TYPE_SFIXED32(input:PT_InputStream):PT_Int {
-#if haxe3
         return input.readInt32();
-#else
-        return haxe.Int32.toInt(input.readInt32());
-#end
     }
     public static function read__TYPE_SFIXED64(input:PT_InputStream):PT_Int64 {
         var low = input.readInt32();
         var high = input.readInt32();
-#if haxe3
         return Protohx.newInt64(high, low);
-#else
-        return Protohx.newInt64(haxe.Int32.toInt(high), haxe.Int32.toInt(low));
-#end
     }
     public static function read__TYPE_SINT32(input:PT_InputStream):PT_Int {
         return ZigZag.decode32(read__TYPE_UINT32(input));

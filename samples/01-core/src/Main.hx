@@ -159,6 +159,19 @@ class TestInt extends TestBase {
             forInt(1 << i);
         }
     }
+
+    public function testRepeat() {
+        var rnds:Array<PT_Int> = [  ];
+        for( x in 0...100 ) rnds.push(x);
+
+        var obj = new IntTestMessage();
+        obj.rnds = rnds;
+        var copy = copyMsg(obj);
+        for (i in 0...rnds.length) {
+            assertEquals(obj.rnds[i], rnds[i]);
+            assertEquals(copy.rnds[i], rnds[i]);
+        }
+    }
 }
 
 class TestInt64 extends TestBase {
