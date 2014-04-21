@@ -382,7 +382,7 @@ public final class Proto2Haxe {
                     return "new " + typeScope.fullName.substring(
                             typeScope.fullName.lastIndexOf('.') + 1) + "()";
                 }
-                return typeScope.fullName;
+                return "new " + typeScope.fullName + "()";
             case TYPE_BYTES:
                 return "defaultBytes()";
             default:

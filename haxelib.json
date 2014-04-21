@@ -4,8 +4,8 @@
     "license": "BSD",
     "tags": [ "protobuf", "serialization", "cross", "neko", "flash", "js", "cpp", "java", "php" ],
     "description": "Crossplatform implementation of 'Google's Protocol Buffers' for haxe.",
-    "version": "0.4.0",
-    "releasenote": "Drop haxe 2.10 support. Cleanup for haxe 3.1.",
+    "version": "0.4.1rc0",
+    "releasenote": "Update for haxe 3.1.x",
     "contributors": [ "nitrobin" ],
     "dependencies": {}
 }
