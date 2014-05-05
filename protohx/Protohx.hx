@@ -3,11 +3,7 @@ package protohx;
 
 typedef PT_Int = Int;
 
-#if PROTOHX_UINT
 typedef PT_UInt = UInt;
-#else
-typedef PT_UInt = Int;
-#end
 
 typedef PT_Int64 = haxe.Int64;
 typedef PT_UInt64 = haxe.Int64;

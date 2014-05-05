@@ -4,14 +4,19 @@
 
 --next
 
--resource assets/plugin_proto_input@plugin_proto_input
 -main Main
 -cp src
 -cp out/src-gen
 -lib protohx
+-debug
+-D HXCPP_STACK_TRACE
+-D HXCPP_STACK_LINE
+-D HXCPP_DEBUG_LINK
+
 
 -cpp out/cpp
 
 --next
 
--cmd out/cpp/Main
+-cmd cp assets/plugin_proto_input out/cpp
+-cmd out/cpp/Main-debug

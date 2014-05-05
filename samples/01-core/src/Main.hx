@@ -22,7 +22,6 @@ class Main {
             untyped __js__("console.log(v);");
         }
 #end
-
         var r = new haxe.unit.TestRunner();
         r.add(new TestComplex());
         r.add(new TestInt());
@@ -35,7 +34,7 @@ class Main {
 
 class TestLargeData extends haxe.unit.TestCase {
     public function getBytes():Bytes {
-        #if java
+        #if (java||cpp)
             return sys.io.File.getBytes("plugin_proto_input");
         #else
         return haxe.Resource.getBytes("plugin_proto_input");

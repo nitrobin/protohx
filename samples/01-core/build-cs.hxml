@@ -10,6 +10,7 @@
 -cp out/src-gen
 -lib protohx
 -debug
+--remap UInt:Int
 
 -cs out/cs
 
