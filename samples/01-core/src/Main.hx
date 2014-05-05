@@ -34,7 +34,9 @@ class Main {
 
 class TestLargeData extends haxe.unit.TestCase {
     public function getBytes():Bytes {
-        #if (java||cpp)
+        #if openfl
+        return openfl.Assets.getBytes("assets/plugin_proto_input");
+        #elseif (java||cpp)
             return sys.io.File.getBytes("plugin_proto_input");
         #else
         return haxe.Resource.getBytes("plugin_proto_input");

@@ -40,19 +40,19 @@ class Protohx {
         return  cast(haxe.Int64.getHigh(i), PT_Int);
     }
 
-    public static function newInt64(h:PT_Int, l:PT_Int):PT_Int64 {
+    public static inline function newInt64(h:PT_Int, l:PT_Int):PT_Int64 {
         return PT_Int64.make(h, l);
     }
 
-    public static function newUInt64(h:PT_Int, l:PT_Int):PT_UInt64 {
+    public static inline function newUInt64(h:PT_Int, l:PT_Int):PT_UInt64 {
         return PT_UInt64.make(h, l);
     }
 
-    public static function setOutputEndian(out:haxe.io.Output):Void {
+    public static inline function setOutputEndian(out:haxe.io.Output):Void {
         out.bigEndian = false;
     }
 
-    public static function setInputEndian(out:haxe.io.Input):Void {
+    public static inline function setInputEndian(out:haxe.io.Input):Void {
         out.bigEndian = false;
     }
 }

@@ -34,17 +34,17 @@ BSD
     * flash
     * neko 2.0
     * cpp (linux32, win32, android)
-    * js (node.js and google-chrome 26)
+    * js
     * php
-    * java (only for haxe 3)
-    * as3 (only for haxe 3)
+    * java
+    * as3
 
 
 ## System requirements
-    * haxe 3
-    * neko 2.0+ 
-    * protoc 2.4.0+ (or 2.5.0+ for generation java sources for test-ipc)
-    * java 
+    * haxe 3.1.3
+    * neko 2.0
+    * protoc 2.5.0
+    * java 1.7
     * ant (for build plugin from sources)
 
 

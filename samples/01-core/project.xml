@@ -13,13 +13,12 @@
     <haxedef name="HXCPP_STACK_LINE" />
     <haxedef name="HXCPP_CHECK_POINTER" />
     <haxedef name="HXCPP_DEBUGGER" />
-    <haxedef name="haxe3" />
-	<haxelib name="nme" />
+	<haxelib name="openfl" />
 	<haxelib name="protohx" />
 
 	<!--<assets path="Assets" rename="assets" exclude="nme.svg" />-->
 	<icon path="Assets/nme.svg" />
 
-    <compilerflag name="-resource" value="assets/plugin_proto_input@plugin_proto_input" />
+    <assets path="assets" rename="assets"/>
 
 </project>
