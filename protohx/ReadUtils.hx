@@ -95,8 +95,8 @@ class ReadUtils {
         var high = input.readInt32();
         return Protohx.newUInt64(high, low);
     }
-    public static function read__TYPE_FIXED32(input:PT_InputStream):PT_Int {
-        return input.readInt32();
+    public static function read__TYPE_FIXED32(input:PT_InputStream):PT_UInt {
+        return cast(input.readInt32(), PT_UInt);
     }
     public static function read__TYPE_BOOL(input:PT_InputStream):PT_Bool {
         return read__TYPE_UINT32(input) != 0;
