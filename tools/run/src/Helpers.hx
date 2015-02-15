@@ -103,7 +103,8 @@ class PlatformHelper {
     }
 
     public static function setExecutableBit(executable:String):Void {
-        if (PlatformHelper.getHostPlatform() == Platform.LINUX) {
+        var platform = PlatformHelper.getHostPlatform();
+        if (platform == Platform.LINUX || platform == Platform.MAC) {
             PlatformHelper.command("chmod", ["a+x", PathHelper.norm(executable)]);
         }
     }
