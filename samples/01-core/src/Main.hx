@@ -59,6 +59,7 @@ class TestLargeData extends haxe.unit.TestCase {
     }
 
 
+#if !(cpp || java || cs)  //TODO
     public function testPluginUnknowns() {
 //        try {
         var bytes = getBytes();
@@ -69,13 +70,12 @@ class TestLargeData extends haxe.unit.TestCase {
         m.writeTo(b);
         var copyBytes = b.getBytes();
         assertEquals(bytes.length, copyBytes.length);
-#if !(cpp || java)  //TODO
         for (i in 0...bytes.length) {
             assertEquals(bytes.get(i), copyBytes.get(i));
         }
-#end
 //        } catch (e:Dynamic) {untyped __java__("((java.lang.Throwable)e).printStackTrace()");}
     }
+#end
 }
 
 

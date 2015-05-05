@@ -1,0 +1,22 @@
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out/cpp
+
+--next
+
+-main Main
+-cp src
+-cp out/src-gen
+-lib protohx
+-debug
+-D HXCPP_STACK_TRACE
+-D HXCPP_STACK_LINE
+-D HXCPP_DEBUG_LINK
+-D HXCPP_CHECK_POINTER
+
+
+-cpp out/cpp
+
+--next
+
+-cmd cp assets/plugin_proto_input out/cpp
+-cmd out/cpp/Main-debug
