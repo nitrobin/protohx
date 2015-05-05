@@ -7,9 +7,6 @@ Currently implemented only basic functionality: read/write messages from/to haxe
  
 haxe 3 compatible. Core functionality doesn't depend on third-party libraries.
 
-## WARNING
-Project is still in alpha. Be careful for production using.
-
 ## License
 BSD
 
