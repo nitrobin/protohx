@@ -54,7 +54,11 @@ message IntTestMessage {
     optional sint64 sui64 = 6;
     optional float f = 7;
     optional double d = 8;
-    repeated sint32  rnds      = 9;
+
+    repeated int32 rnds     = 9;
+    repeated sint32 srnds   = 10;
+    repeated uint32 urnds   = 11;
+    repeated fixed32 frnds  = 12;
 }
 
 message Foo {

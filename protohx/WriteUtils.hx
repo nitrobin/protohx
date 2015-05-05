@@ -83,7 +83,7 @@ class WriteUtils {
         output.writeInt32(Protohx.getLow(value));
         output.writeInt32(Protohx.getHigh(value));
     }
-    public static function write__TYPE_FIXED32(output:PT_OutputStream, value:PT_Int):Void {
+    public static function write__TYPE_FIXED32(output:PT_OutputStream, value:PT_UInt):Void {
         output.writeInt32(value);
     }
     public static function write__TYPE_BOOL(output:PT_OutputStream, value:PT_Bool):Void {
@@ -104,7 +104,7 @@ class WriteUtils {
             write__TYPE_UINT32(output, 0);
         }
     }
-    public static function write__TYPE_UINT32(output:PT_OutputStream, value:PT_Int):Void {
+    public static function write__TYPE_UINT32(output:PT_OutputStream, value:PT_UInt):Void {
         while (true) {
             if ((value & (0xffffffff << 7)) == 0) {
                 output.writeByte(value);

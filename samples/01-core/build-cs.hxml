@@ -10,11 +10,11 @@
 -cp out/src-gen
 -lib protohx
 -debug
---remap UInt:Int
 
 -cs out/cs
 
 --next
 
 -cmd cd out/cs
--cmd gmcs -recurse:*.cs -main:Test -out:Tester.exe-debug
+-cmd mono bin/Main-Debug.exe
+#-cmd gmcs -recurse:*.cs -main:Main -out:Tester.exe-debug

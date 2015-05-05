@@ -15,7 +15,7 @@
 --next
 
 -cmd cd out/as3
--cmd mxmlc -output as3.swf __main__.as  -static-link-runtime-shared-libraries=true -debug
+-cmd /opt/haxetoolkit/tools/apache-flex-sdk-4.11.0-bin/bin/mxmlc -output as3.swf __main__.as  -static-link-runtime-shared-libraries=true -debug
 #-swf-header 800:600:40:FFFFFF
 
 -cmd flashplayerdebugger as3.swf

@@ -59,6 +59,7 @@ class TestLargeData extends haxe.unit.TestCase {
     }
 
 
+#if !(cpp || java || cs)  //TODO
     public function testPluginUnknowns() {
 //        try {
         var bytes = getBytes();
@@ -69,13 +70,12 @@ class TestLargeData extends haxe.unit.TestCase {
         m.writeTo(b);
         var copyBytes = b.getBytes();
         assertEquals(bytes.length, copyBytes.length);
-#if !(cpp || java)  //TODO
         for (i in 0...bytes.length) {
             assertEquals(bytes.get(i), copyBytes.get(i));
         }
-#end
 //        } catch (e:Dynamic) {untyped __java__("((java.lang.Throwable)e).printStackTrace()");}
     }
+#end
 }
 
 
@@ -162,15 +162,31 @@ class TestInt extends TestBase {
     }
 
     public function testRepeat() {
-        var rnds:Array<PT_Int> = [  ];
-        for( x in 0...100 ) rnds.push(x);
-
         var obj = new IntTestMessage();
-        obj.rnds = rnds;
+        for( x in 0...1000 ) {
+            obj.rnds.push(x);
+            obj.srnds.push(x);
+            obj.urnds.push(x);
+            obj.frnds.push(x);
+        }
+        for( x in 0...1000 ) {
+            obj.rnds.push(-x);
+            obj.srnds.push(-x);
+            obj.frnds.push(-x);
+        }
+
         var copy = copyMsg(obj);
-        for (i in 0...rnds.length) {
-            assertEquals(obj.rnds[i], rnds[i]);
-            assertEquals(copy.rnds[i], rnds[i]);
+        for (i in 0...obj.rnds.length) {
+            assertEquals(obj.rnds[i], copy.rnds[i]);
+        }
+        for (i in 0...obj.srnds.length) {
+            assertEquals(obj.srnds[i], copy.srnds[i]);
+        }
+        for (i in 0...obj.urnds.length) {
+            assertEquals(obj.urnds[i], copy.urnds[i]);
+        }
+        for (i in 0...obj.frnds.length) {
+            assertEquals(obj.frnds[i], copy.frnds[i]);
         }
     }
 }
