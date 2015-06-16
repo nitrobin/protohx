@@ -22,9 +22,9 @@ class MessageUtils {
 #if java
         } else if (untyped __java__('value instanceof java.lang.Long')) {
 #else
-        } else if (Std.is(value, Int64)) {
+        } else if (Int64.is(value)) {
 #end
-            return cast(value, Int64).toStr();
+            return value.toStr();
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};
             var msg = cast(value, protohx.Message);
