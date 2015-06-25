@@ -18,13 +18,8 @@ class MessageUtils {
             return value;
         } else if (Std.is(value, Bytes)) {
             return cast(value, Bytes).toHex();
-// workaround bug https://code.google.com/p/haxe/issues/detail?id=1674
-#if java
-        } else if (untyped __java__('value instanceof java.lang.Long')) {
-#else
         } else if (Int64.is(value)) {
-#end
-            return value.toStr();
+            return Int64.toStr(cast(value, Int64));
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};
             var msg = cast(value, protohx.Message);
