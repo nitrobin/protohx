@@ -47,6 +47,8 @@ BSD
     1) install protohx
          $ haxelib install protohx
        or
+         $ haxelib hg protohx https://bitbucket.org/nitrobin/protohx
+       or
          $ haxelib git protohx https://github.com/nitrobin/protohx
     2) install protoc into system PATH
        * Windows: 
