@@ -63,6 +63,7 @@ class TestComplex extends TestBase {
         obj.msgOpt = "msgOpt1";
 
         obj.rnd = -1;
+        obj.i64 = Protohx.newInt64(8, 8);
 
         obj.attach = Bytes.alloc(256);
         for (b in 0...256) {

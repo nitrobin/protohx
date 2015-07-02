@@ -18,7 +18,11 @@ class MessageUtils {
             return value;
         } else if (Std.is(value, Bytes)) {
             return cast(value, Bytes).toHex();
+#if (haxe_ver >= 3.2)
         } else if (Int64.is(value)) {
+#else
+        } else if (Std.is(value, Int64)) {
+#end
             return Int64.toStr(cast(value, Int64));
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};

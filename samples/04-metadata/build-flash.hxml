@@ -1,17 +1,18 @@
 
 -cmd haxelib run protohx generate protohx.json
--cmd mkdir -p out
+#-cmd mkdir -p out
 
 --next
 
 -main Main
 -cp src
 -cp out/src-gen
--neko out/run.n
 -lib protohx
 -debug
 
+-swf out/run.swf
+-swf-header 800:600:40:FFFFFF
 
 --next
 
--cmd neko out/run.n
+-cmd flashplayerdebugger out/run.swf
