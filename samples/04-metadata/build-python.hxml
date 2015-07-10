@@ -1,0 +1,16 @@
+
+-cmd haxelib run protohx generate protohx.json
+-cmd mkdir -p out
+
+--next
+
+-main Main
+-cp src
+-cp out/src-gen
+-lib protohx
+
+-python out/run.py
+
+--next
+
+-cmd python3 out/run.py

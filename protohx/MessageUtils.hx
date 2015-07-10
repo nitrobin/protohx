@@ -23,7 +23,7 @@ class MessageUtils {
 #else
         } else if (Std.is(value, Int64)) {
 #end
-            return Int64.toStr(cast(value, Int64));
+            return Int64.toStr(cast(value));
         } else if (Std.is(value, protohx.Message)) {
             var m:Dynamic = {};
             var msg = cast(value, protohx.Message);
