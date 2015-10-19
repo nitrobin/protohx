@@ -4,8 +4,8 @@
     "license": "BSD",
     "tags": [ "protobuf", "serialization", "cross", "neko", "flash", "js", "cpp", "java", "php" ],
     "description": "Crossplatform implementation of 'Google's Protocol Buffers' for haxe.",
-    "version": "0.4.5",
-    "releasenote": "Fix for hxcpp target",
+    "version": "0.4.6",
+    "releasenote": "Enforcing class names to be Upper Case. (Thanks Bruno Santos @bmfs)",
     "contributors": [ "nitrobin" ],
     "dependencies": {}
 }
