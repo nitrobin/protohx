@@ -31,7 +31,7 @@ public final class Proto2Haxe {
     ));
 
     private static final class Scope<Proto> {
-        // 如果 proto instanceOf Scope ，则这个 Scope 是对另一 Scope 的引用
+        
         public final String fullName;
         public final Scope<?> parent;
         public Proto proto;
@@ -340,7 +340,7 @@ public final class Proto2Haxe {
                     return typeScope.fullName.substring(
                             typeScope.fullName.lastIndexOf('.') + 1);
                 }
-                return typeScope.fullName;
+                return upperImport(typeScope.fullName);
             case TYPE_BYTES:
                 return "PT_Bytes";
             default:
@@ -379,10 +379,10 @@ public final class Proto2Haxe {
                 }
                 if (typeScope == scope) {
                     // workaround for mxmlc's bug.
-                    return "new " + typeScope.fullName.substring(
-                            typeScope.fullName.lastIndexOf('.') + 1) + "()";
+                    return "new " + upperImport(typeScope.fullName.substring(
+                            typeScope.fullName.lastIndexOf('.') + 1)) + "()";
                 }
-                return "new " + typeScope.fullName + "()";
+                return "new " + upperImport(typeScope.fullName) + "()";
             case TYPE_BYTES:
                 return "defaultBytes()";
             default:
@@ -537,11 +537,11 @@ public final class Proto2Haxe {
         }
         for (String importType : importTypes) {
             content.append("import ");
-            content.append(importType);
+            content.append(upperImport(importType));
             content.append(";\n");
         }
         content.append("class ");
-        final String className = scope.proto.getName();
+        final String className = upperFirst(scope.proto.getName());
         content.append(className);
         content.append(" extends protohx.Message");
         content.append(" {\n");
@@ -554,7 +554,7 @@ public final class Proto2Haxe {
             }
             final String lowerCamelCaseField = getLowerCamelCaseField(fdp);
             final String upperCamelCaseField = getUpperCamelCaseField(fdp);
-            final String haxeType = getHaxeType(scope, fdp);
+            final String haxeType = upperImport(getHaxeType(scope, fdp));
             final boolean valueType = isValueType(fdp.getType());
             content.append("\n\t/** " + fdp.getLabel() + " " + fdp.getName() + " : " + fdp.getType() + " = " + fdp.getNumber() + " */\n");
 
@@ -832,7 +832,7 @@ public final class Proto2Haxe {
         if (repeated) {
             haxeType = "Array<" + haxeType + ">";
         }
-        return "\tpublic inline function set" + upperCamelCaseField + "(value:" + haxeType + "):" + className + "{\n" +
+        return "\tpublic inline function set" + upperCamelCaseField + "(value:" + haxeType + "):" + upperFirst(className) + "{\n" +
                 "\t\tthis." + lowerCamelCaseField + " = value;\n" +
                 "\t\treturn this;\n" +
                 "\t}\n\n";
@@ -842,7 +842,7 @@ public final class Proto2Haxe {
                                   StringBuilder content) {
         final String name = scope.proto.getName();
         content.append("import protohx.Protohx;\n");
-        content.append("class " + name + " {\n");
+        content.append("class " + upperFirst(name) + " {\n");
         for (EnumValueDescriptorProto evdp : scope.proto.getValueList()) {
             final String valueName = evdp.getName();
             final int valueNumber = evdp.getNumber();
@@ -885,7 +885,7 @@ public final class Proto2Haxe {
                 writeFile(scope, content);
                 responseBuilder.addFile(
                         CodeGeneratorResponse.File.newBuilder().
-                                setName(scope.fullName.replace('.', '/') + ".hx").
+                                setName(upperImport(scope.fullName).replace('.', '/') + ".hx").
                                 setContent(content.toString()).
                                 build()
                 );
@@ -907,7 +907,7 @@ public final class Proto2Haxe {
             writeFiles(root, responseBuilder);
             response = responseBuilder.build();
         } catch (Exception e) {
-            // 出错，报告给 protoc ，然后退出
+            
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
@@ -919,6 +919,32 @@ public final class Proto2Haxe {
         }
         response.writeTo(System.out);
         System.out.flush();
+    }
+
+    public static String upperImport(String str)
+    {
+        String[] parts = str.split("\\.");
+        if (parts.length == 0 ) return upperFirst(str);
+        
+
+        parts[parts.length-1] = upperFirst(parts[parts.length-1]);
+        
+        List<String> list = Arrays.asList(parts);
+       
+        Iterator<String> iter = list.iterator();
+        StringBuilder sb = new StringBuilder();
+        if (iter.hasNext()) {
+            sb.append(iter.next());
+            while (iter.hasNext()) {
+                sb.append('.').append(iter.next());
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String upperFirst(String str)
+    {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
 
