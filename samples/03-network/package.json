@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "socket.io": "0.9.14",
-    "express": "3.1.1"
+    "express": "4.17.1"
   }
 }
