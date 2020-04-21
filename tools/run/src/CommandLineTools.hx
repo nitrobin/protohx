@@ -52,7 +52,7 @@ class Context {
 
 class TaskDef {
     public var protoFiles:Array<String>;
-    public var protoPath:String;
+    public var protoPath:Array<String>;
     public var haxeOut:String;
     public var javaOut:String;
     public var cleanOut:Bool;
@@ -62,7 +62,13 @@ class TaskDef {
 
     public static function fromJson(taskJson:Dynamic):TaskDef {
         var result = new TaskDef();
-        result.protoPath = taskJson.protoPath;
+        
+        var pathType:String = Type.getClassName(Type.getClass(taskJson.protoPath));
+        if (pathType == "String"){
+        	result.protoPath = [taskJson.protoPath];
+        } else if (pathType == "Array"){
+            result.protoPath = taskJson.protoPath;
+        }
         result.haxeOut = taskJson.haxeOut;
         result.javaOut = taskJson.javaOut;
         result.cleanOut = (taskJson.cleanOut == true);
@@ -83,7 +89,7 @@ class CommandLineTools {
 
     public static function saveDefaultConfig(fileName:String):Void {
         var task = new TaskDef();
-        task.protoPath = ".";
+        task.protoPath = ["."];
         task.haxeOut = "src-gen";
         task.javaOut = null;
         task.cleanOut = true;
@@ -98,7 +104,7 @@ class CommandLineTools {
         var result = TaskDef.fromJson(taskJson);
 
         if (result.protoPath == null) {
-            result.protoPath = ".";
+            result.protoPath = ["."];
         }
         if (result.protoFiles == null || result.protoFiles.length == 0) {
             throw new Error("Required field 'protoFiles' is empty.");
@@ -148,7 +154,11 @@ class CommandLineTools {
         if (task.javaOut != null) {
             args.push("--java_out=" + PathHelper.norm(task.javaOut));
         }
-		args.push("--proto_path=" + PathHelper.norm(FileSystem.fullPath(task.protoPath)));
+
+		for (pp in task.protoPath) {
+			args.push("--proto_path=" + PathHelper.norm(FileSystem.fullPath(pp)));
+		}
+
         for (pf in task.protoFiles){
             args.push(PathHelper.norm(FileSystem.fullPath(pf)));
         }
